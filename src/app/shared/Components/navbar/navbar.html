@@ -1,0 +1,40 @@
+<div class="top-bar">
+  <div class="top-bar-left">
+    <span><i class="fas fa-phone"></i> 1-800-PHARMA</span>
+    <span><i class="fas fa-map-marker-alt"></i> Find a store</span>
+  </div>
+  <div class="top-bar-right">
+    <span><i class="fas fa-clock"></i> Mon-Sat 8am-9pm · Sun 9am-6pm</span>
+  </div>
+</div>
+<header class="main-header">
+  <div class="logo">
+    <div class="logo-text">
+      Medi<span class="text">Store</span>
+      <small>PHARMACY</small>
+    </div>
+  </div>
+
+  <div class="search-bar-container">
+    <input 
+      type="text" 
+      placeholder="Search medicines, vitamins, brands..." 
+      class="search-input"
+      [(ngModel)]="searchQuery"
+      (keyup.enter)="onSearch()"
+    >
+    <i class="fas fa-search search-icon" (click)="onSearch()"></i>
+  </div>
+
+  <div class="header-actions">
+    <button class="action-btn" routerLink="/home">Home</button>
+    <button class="action-btn" routerLink="/location"> Location</button>
+    <button class="action-btn" routerLink="/about-us"> About Us</button>
+    <button class="action-btn" routerLink="/contact-me"> Contact me</button>
+    <button class="admin-btn"><i class="fa-solid fa-user"></i></button>
+    <button class="notification-btn"><i class="fa-solid fa-bell"></i></button>
+    <button routerLink="/Product" class="cart-btn">
+      <i class="fas fa-shopping-cart"></i> 
+    </button>
+  </div>
+</header>

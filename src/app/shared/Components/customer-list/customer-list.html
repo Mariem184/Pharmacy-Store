@@ -1,0 +1,37 @@
+<div class="customer-container">
+    <div class="header">
+        <h2>Customers</h2>
+        <p>{{ filteredCustomers.length }} registered customers</p>
+    </div>
+
+
+    <div class="search-and-filters">
+        <input type="text" [(ngModel)]="searchText" (input)="filteredCustomers" placeholder="Search customers..." class="search-input">
+        <div class="filter-buttons">
+            <button [class.active]="selectedFilter === 'All'"(click)="setFilter('All')">All</button>
+            <button [class.active]="selectedFilter === 'Active'"(click)="setFilter('Active')">Active</button>
+            <button [class.active]="selectedFilter === 'Inactive'"(click)="setFilter('Inactive')">Inactive</button>
+        </div>
+    </div>
+
+    <div class="cards-grid">
+        <div class="card" *ngFor="let customer of filteredCustomers">
+            <div class="card-top">
+                <div class="avatar">{{ getInitials(customer.name) }}</div>
+                <div class="info">
+                    <div class="name"><strong>{{customer.name}}</strong></div>
+                    <div class="date"><p>Since {{customer.date}}</p></div>
+                </div>
+                <span class="status"> {{customer.status}} </span>
+            </div>
+            <div class="card-bottom">
+                <p><i class="fa-solid fa-envelope"></i> {{customer.email}}</p>
+                <p><i class="fa-solid fa-phone"></i> {{customer.phone}}</p>
+                <div class="stats">
+                    <div class="stat"><strong>{{customer.orders}}</strong><br><small>ORDERS</small></div>
+                    <div class="stat"><strong>${{customer.spent}}</strong><br><small>SPENT</small></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

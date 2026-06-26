@@ -1,0 +1,40 @@
+.categories-nav {
+  display: flex;
+  align-items: center;
+  
+  padding: 10px 5%;
+  border-bottom: 1px solid #ededed;
+  background-color: #ffffff;
+  font-size: 14px;
+}
+.nav-links {
+  display: flex;
+  gap: 10px;
+}
+.nav-item {
+  text-decoration: none;
+  color: #555;
+  font-size: 15px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+}
+.nav-item i {
+  color: #888;
+  font-size: 13px;
+}
+
+.nav-item.active {
+  color: #ffffff;
+  background-color: #0b6848;
+  border-radius: 10px;
+  font-weight: bold;
+  
+}
+
+.nav-item.active i {
+  color: #ffffff;
+  
+}
