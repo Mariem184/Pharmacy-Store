@@ -1,3 +1,4 @@
+@if(!simplified){
 <div class="top-bar">
   <div class="top-bar-left">
     <span><i class="fas fa-phone"></i> 1-800-PHARMA</span>
@@ -7,6 +8,8 @@
     <span><i class="fas fa-clock"></i> Mon-Sat 8am-9pm · Sun 9am-6pm</span>
   </div>
 </div>
+}
+
 <header class="main-header">
   <div class="logo">
     <div class="logo-text">
@@ -14,7 +17,7 @@
       <small>PHARMACY</small>
     </div>
   </div>
-
+@if (!simplified) {
   <div class="search-bar-container">
     <input 
       type="text" 
@@ -25,8 +28,9 @@
     >
     <i class="fas fa-search search-icon" (click)="onSearch()"></i>
   </div>
-
+}
   <div class="header-actions">
+    @if (!simplified) {
     <button class="action-btn" routerLink="/home">Home</button>
     <button class="action-btn" routerLink="/location"> Location</button>
     <button class="action-btn" routerLink="/about-us"> About Us</button>
@@ -36,5 +40,9 @@
     <button routerLink="/Product" class="cart-btn">
       <i class="fas fa-shopping-cart"></i> 
     </button>
+  }@else {
+    <button class="action-btn" routerLink="/auth/login">Login</button>
+    <button class="action-btn" routerLink="/auth/register">Register</button>
+  }
   </div>
 </header>

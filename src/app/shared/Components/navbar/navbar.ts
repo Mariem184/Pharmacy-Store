@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router'; 
@@ -11,6 +11,8 @@ import { ProductService } from '../../../core/Services/product.services';
   styleUrl: './navbar.css',
 })
 export class Navbar {
+@Input() simplified: boolean = false;
+
  searchQuery: string = '';
 
   constructor(private productService: ProductService) {}

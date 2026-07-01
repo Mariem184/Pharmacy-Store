@@ -5,7 +5,9 @@ import { AboutUs } from './features/Pages/about-us/about-us';
 import { AdminLayout } from './features/Layout/admin-layout/admin-layout';
 import { CustomerList } from './shared/Components/customer-list/customer-list';
 import { ContactMe } from './features/Pages/contact-me/contact-me';
-
+import { AuthLayout } from './features/Layout/auth-layout/auth-layout';
+import { Login } from './features/Auth/login/login';
+import { Register } from './features/Auth/register/register';
 export const routes: Routes = [
   {
     path: 'home',
@@ -33,6 +35,20 @@ export const routes: Routes = [
     component: AdminLayout,
     children:[
       { path: 'customers', component: CustomerList},
+    ]
+  },
+  {
+    path: 'auth',
+    component: AuthLayout,
+    children: [
+      {
+        path: 'login',
+        component: Login
+      },
+      {
+        path: 'register',
+        component: Register
+      }
     ]
   }
 ];
