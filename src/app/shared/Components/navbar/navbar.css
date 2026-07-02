@@ -83,7 +83,7 @@ span.text{
 .action-btn:hover {
   color: #0b6848;
 }
-.notification-btn ,.admin-btn{
+.notification-btn ,.admin-btn, .logout-btn{
   border: none;
   font-size: 15px;
   color: white;
@@ -108,7 +108,12 @@ span.text{
   padding-right: 2px;
   
 }
-.cart-btn:hover ,.notification-btn:hover ,.admin-btn:hover{
+.cart-btn:hover ,.notification-btn:hover ,.admin-btn:hover , .logout-btn:hover{
   background-color: #084f36;
   transform: translateY(-3px);
+}
+
+
+.logout-btn{
+    background-color: #0b6848;
 }

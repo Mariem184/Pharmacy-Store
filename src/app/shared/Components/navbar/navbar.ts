@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router'; 
 import { ProductService } from '../../../core/Services/product.services';
+import { AuthService } from '../../../core/Services/auth';
 @Component({
   selector: 'app-navbar',
   standalone: true,
@@ -11,14 +12,30 @@ import { ProductService } from '../../../core/Services/product.services';
   styleUrl: './navbar.css',
 })
 export class Navbar {
-@Input() simplified: boolean = false;
+isLoggesIn: boolean = false;
 
  searchQuery: string = '';
 
-  constructor(private productService: ProductService) {}
+  constructor(private productService: ProductService, private _AuthService: AuthService) {
+    this._AuthService.userData.subscribe({
+      next:(res)=>{
+        console.log(res);
+        if(res != null){
+          this.isLoggesIn = true;
+        }else{
+          this.isLoggesIn = false;
+        }
+      }
+    })
+  }
 
   onSearch() {
     this.productService.searchQuery = this.searchQuery;
     window.dispatchEvent(new CustomEvent('search-triggered'));
+  }
+
+
+  logout(){
+    this._AuthService.logout();
   }
 }
