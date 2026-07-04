@@ -5,8 +5,24 @@
         <span class="page-name"> Admin</span>
     </div>
     <div class="nav-actions">
-        <div class="notification-wrapper">
-            <i class="fa-regular fa-bell"></i>
+        <div class="notification-wrapper" (click)="toggleNotificationBox()" style="position: relative; cursor: pointer;">
+            <i class="fa-regular fa-bell" style="font-size: 20px; color: #555;"></i>
+            <span class="bell-badge" *ngIf="lowStockCount > 0">{{ lowStockCount }}</span>
+            <div class="notification-box" *ngIf="showNotificationBox" (click)="$event.stopPropagation()">
+                <div class="box-header">
+                    <h6>Notifications</h6>
+                    <button class="close-btn" (click)="toggleNotificationBox()">×</button>
+                </div>
+                <div class="box-body">
+                    <div *ngIf="lowStockCount > 0">
+                        <p class="alert-text">
+                            <strong>Warning:</strong> There are <strong>{{ lowStockCount }}</strong> products running low on stock!
+                        </p>
+                        <p class="products-list">Products: {{ alertProductNames }}</p>
+                    </div>
+                    <p *ngIf="lowStockCount === 0" class="empty-msg">All caught up! No new notifications.</p>
+                </div>
+            </div>
         </div>
         <div class="profile-wrapper">
             <div class="profile-circle">AM</div>

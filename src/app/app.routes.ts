@@ -4,6 +4,7 @@ import { Cart } from './shared/Components/cart/cart';
 import { AboutUs } from './features/Pages/about-us/about-us';
 import { AdminLayout } from './features/Layout/admin-layout/admin-layout';
 import { CustomerList } from './shared/Components/customer-list/customer-list';
+import { SettingsComponent } from './shared/Components/settings/settings';
 import { ContactMe } from './features/Pages/contact-me/contact-me';
 import { AuthLayout } from './features/Layout/auth-layout/auth-layout';
 import { Login } from './features/Auth/login/login';
@@ -31,13 +32,6 @@ export const routes: Routes = [
     component:ContactMe
   },
   {
-     path: 'admin',
-    component: AdminLayout,
-    children:[
-      { path: 'customers', component: CustomerList},
-    ]
-  },
-  {
     path: 'auth',
     component: AuthLayout,
     children: [
@@ -51,4 +45,14 @@ export const routes: Routes = [
       }
     ]
   }
+  ,
+  {
+    path: 'admin',
+    component: AdminLayout,
+    children:[
+      { path: 'customers', component: CustomerList },
+      { path: 'settings', component: SettingsComponent }
+    ]
+  },
+  { path: '', redirectTo: '/admin/settings', pathMatch: 'full'}
 ];
