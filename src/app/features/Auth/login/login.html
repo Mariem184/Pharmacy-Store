@@ -1,43 +1,96 @@
 <div class="auth-page">
+
+  <!-- Back Button -->
+  <button class="back-btn" routerLink="/">
+    <i class="fa-solid fa-arrow-left"></i>
+  </button>
+
+  <!-- Logo -->
+  <div class="auth-logo">
+    <div class="logo">
+      <div class="logo-text">
+        Medi<span class="text">Store</span>
+        <small>PHARMACY</small>
+      </div>
+    </div>
+  </div>
+
   <div class="auth-card">
+
     <h1 class="auth-title">Login</h1>
-    <p class="auth-subtitle">Welcome back! Please login to your account.</p>
+    <p class="auth-subtitle">
+      Welcome back! Please login to your account.
+    </p>
 
     <form [formGroup]="logForm" (ngSubmit)="Login()">
 
       <div class="form-group">
         <label>Email</label>
-        <input formControlName="email" type="email" class="form-control" placeholder="example@email.com">
+
+        <input
+          formControlName="email"
+          type="email"
+          class="form-control"
+          placeholder="example@email.com">
+
         @if(logForm.get('email')?.errors && logForm.get('email')?.touched){
-          <div class="error-msg">
-            @if(logForm.get('email')?.errors?.["required"]){
-              <p>Email is required</p>
-            }
-            @if(logForm.get('email')?.errors?.["email"]){
-              <p>Email is invalid</p>
-            }
-          </div>
+
+        <div class="error-msg">
+
+          @if(logForm.get('email')?.errors?.["required"]){
+          <p>Email is required</p>
+          }
+
+          @if(logForm.get('email')?.errors?.["email"]){
+          <p>Email is invalid</p>
+          }
+
+        </div>
+
         }
+
       </div>
 
       <div class="form-group">
+
         <label>Password</label>
-        <input formControlName="password" type="password" class="form-control" placeholder="••••••••">
-        @if(logForm.get('password')?.errors && logForm.get('password')?.touched){
-          <div class="error-msg">
-            @if(logForm.get('password')?.errors?.["required"]){
-              <p>Password is required</p>
-            }
-            @if(logForm.get('password')?.errors?.["pattern"]){
-              <p>Password must be 6-16 characters with a number and a special character</p>
-            }
-          </div>
+
+        <input
+          formControlName="password"
+          type="password"
+          class="form-control"
+          placeholder="••••••••">
+
+        @if(logForm.get('password')?.errors &&
+        logForm.get('password')?.touched){
+
+        <div class="error-msg">
+
+          @if(logForm.get('password')?.errors?.["required"]){
+          <p>Password is required</p>
+          }
+
+          @if(logForm.get('password')?.errors?.["pattern"]){
+          <p>Password must be 6-16 characters with a number and a special character</p>
+          }
+
+        </div>
+
         }
+
       </div>
 
-      <button type="submit" class="auth-btn">Login</button>
+      <button type="submit" class="auth-btn">
+        Login
+      </button>
 
-      <p class="auth-footer-text">Don't have an account? <a routerLink="/auth/register">Register</a></p>
+      <p class="auth-footer-text">
+        Don't have an account?
+        <a routerLink="/auth/register">Register</a>
+      </p>
+
     </form>
+
   </div>
+
 </div>
