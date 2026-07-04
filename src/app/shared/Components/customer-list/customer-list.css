@@ -2,11 +2,11 @@
     padding: 24px;
     background-color: #f7f9fa;
     min-height: 100vh;
-    font-family: sans-serif;
 }
 .search-and-filters{
     display: flex;
     margin-bottom: 20px;
+    margin-top: 30px;
     gap: 20px;
     align-items: center;
     justify-content: flex-start;
@@ -22,6 +22,11 @@
     display: flex;
     gap: 10px;
 }
+.filter-buttons button:hover{
+    background-color: #e0e0e0;
+    box-shadow: 0 4px 8px rgba(0,0,0,0,0.2);
+}
+
 .filter-buttons button{
     padding: 8px 15px;
     cursor: pointer;
@@ -29,10 +34,13 @@
     background: white;
     margin-left: 5px;
     border-radius: 5px;
+     transition: all 0.2s ease-in-out;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0,0.1);
 }
 .filter-buttons button.active{
-    background-color: #0C6043;
-    color: #fff;
+    background-color: #0C6043 !important;
+    color: #fff !important;
     border-color: #c3e6cb;
 }
 .cards-grid{

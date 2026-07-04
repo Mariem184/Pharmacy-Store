@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { CustomerService } from '../../../services/customer';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 
@@ -9,16 +10,24 @@ import {FormsModule} from '@angular/forms';
   templateUrl: './customer-list.html',
   styleUrl: './customer-list.css'
 })
-export class CustomerList {
+export class CustomerList implements OnInit{
    searchText: string = '';
    selectedFilter: string = 'All';
 
-  customers = [
-    {name: 'Sarah Mitchell',date: '2024-03-15', email: 'sarah.m@email.com', phone: '+44 7700 900142', orders: 14, spent: 487, status: 'Inactive'},
-    {name: 'James Thornton',date: '2024-07-22', email: 'j.thornton@email.com', phone: '+44 7700 900287', orders: 6, spent: 199, status: 'Active'},
-    {name: 'Priya Sharma', email: 'priya.s@email.com', phone: '+44 7700 900391', orders: 22, spent: 1125, status: 'Active'},
+  customers: any[] = [];
+    constructor(private _customerService: CustomerService){}
 
-  ];
+    ngOnInit(){
+      this._customerService.getAllCustomers().subscribe({
+        next: (res) =>{
+          this.customers = res.users;
+          console.log('Client Information', res.users[0]);
+        },
+        error:(err) => {
+          console.log('Error', err);
+        }
+      });
+    }
 
   getInitials(name: string): string{
     const parts = name.split(' ');
@@ -31,12 +40,31 @@ export class CustomerList {
   get filteredCustomers(){
     return this.customers.filter(c => {
       const matchesSearch = c.name.toLowerCase().includes(this.searchText.toLowerCase());
-      const matchesFilter = (this.selectedFilter === 'All')? true : (c.status === this.selectedFilter);
+
+
+      const now = new Date();
+      const cDate = new Date(c.createdAt);
+      let matchesFilter = false;
+
+
+      if(this.selectedFilter === 'All'){
+        matchesFilter = true;
+      }else if (this.selectedFilter === 'Today'){
+        matchesFilter = cDate.toDateString() === now.toDateString();
+      }else if (this.selectedFilter === 'This Month'){
+        matchesFilter = cDate .getMonth() === now.getMonth() &&
+        cDate.getFullYear() === now.getFullYear();
+      }else if (this.selectedFilter === 'This Year'){
+        matchesFilter = cDate.getFullYear() === now.getFullYear();
+      }
       return matchesSearch && matchesFilter;
     });
   }
 
   setFilter(filter: string){
+    console.log('doneeeeeeeeeee', filter)
     this.selectedFilter = filter;
   }
+
+
 }

@@ -1,9 +1,29 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common'; 
 
 @Component({
   selector: 'app-sidebar',
-  imports: [],
+  standalone: true, 
+  imports: [RouterModule, CommonModule], 
   templateUrl: './sidebar.html',
-  styleUrl: './sidebar.css',
+  styleUrls: ['./sidebar.css']
 })
-export class Sidebar {}
+export class Sidebar implements OnInit {
+
+  adminName: string = 'Admin';
+
+  constructor(private router: Router) { }
+
+  ngOnInit(): void {
+  }
+
+  logout() {
+    console.log('Log out Success!');
+    localStorage.removeItem('token'); 
+    sessionStorage.clear(); 
+    this.router.navigate(['/login']); 
+  }
+  
+  
+}

@@ -31,3 +31,77 @@
     font-weight: 600;
     font-size: 14px;
 }
+.notification-box {
+    position: absolute;
+    top: 35px;
+    right: 0;
+    width: 300px;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    direction: rtl; 
+}
+
+.box-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    border-bottom: 1px solid #f0f0f0;
+    background-color: #f9f9f9;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.box-header h6 {
+    margin: 0;
+    font-size: 14px;
+    color: #333;
+    font-weight: bold;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: #999;
+    cursor: pointer;
+}
+
+.close-btn:hover {
+    color: #333;
+}
+
+.box-body {
+    padding: 15px;
+    font-size: 13px;
+    color: #555;
+    line-height: 1.5;
+}
+
+.products-list {
+    color: #ff4d4d;
+    font-weight: 500;
+}
+
+.empty-msg {
+    text-align: center;
+    color: #777;
+    margin: 0;
+}
+
+.bell-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: #ff4d4d;
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    border-radius: 50%;
+    padding: 2px 6px;
+    min-width: 14px;
+    text-align: center;
+}

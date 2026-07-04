@@ -9,12 +9,23 @@
         <li><a href="#">Dashboard</a></li>
         <li><a href="#">Products</a></li>
         <li><a href="#">Orders</a></li>
-        <li><a href="#">Customers</a></li>
-        <li><a href="#">Settings</a></li>
+        <li><a routerLink="/admin/customers">Customers</a></li>
+        <li><a routerLink="/admin/settings">Settings</a></li>
     </ul>
+
     <h5 class="sub-title">Store</h5>
     <ul class="nav-links">
         <li><a href="#">View Store</a></li>
         <li><a href="#">Store Map</a></li>
     </ul>
+
+    <div class="sidebar-footer">
+        <div class="admin-info">
+            <span class="admin-name">{{ adminName }}</span> 
+        </div>
+        
+        <button class="logout-btn" (click)="logout()" title="log out">
+            <i class="fas fa-sign-out-alt"></i> 
+        </button>
+    </div>
 </nav>
