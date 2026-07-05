@@ -9,6 +9,8 @@ import { ContactMe } from './features/Pages/contact-me/contact-me';
 import { AuthLayout } from './features/Layout/auth-layout/auth-layout';
 import { Login } from './features/Auth/login/login';
 import { Register } from './features/Auth/register/register';
+import { ProductDetails } from './features/Pages/product-details/product-details';
+import { LocationComponent } from './features/Pages/location/location';
 export const routes: Routes = [
   {
     path: 'home',
@@ -24,12 +26,20 @@ export const routes: Routes = [
     component: Cart
   },
   {
+    path: 'location',
+    component: LocationComponent
+  },
+  {
     path: 'about-us',
     component: AboutUs
   },
   {
     path:'contact-me',
     component:ContactMe
+  },
+  {
+    path:'product-details/:id',
+    component:ProductDetails
   },
   {
     path: 'auth',

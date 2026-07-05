@@ -3,10 +3,11 @@ import { Navbar } from "../../../shared/Components/navbar/navbar";
 import { Footer } from "../../../shared/Components/footer/footer";
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Cart } from "../../../shared/Components/cart/cart";
 
 @Component({
   selector: 'app-contact-me',
-  imports: [Navbar, Footer,CommonModule,FormsModule],
+  imports: [Navbar, Footer,CommonModule,FormsModule, Cart],
   templateUrl: './contact-me.html',
   styleUrl: './contact-me.css',
 })

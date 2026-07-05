@@ -6,7 +6,7 @@
 <main class="home-layout">
   <app-hero *ngIf="selectedCategory === 'All Product'"></app-hero>
   
-  <div class="container my-4">
+  <div class="container my-4" id="products-section">
     <app-product-card #cardRef [currentCategory]="selectedCategory"></app-product-card>
   </div>
 </main>

@@ -21,6 +21,12 @@
       Welcome back! Please login to your account.
     </p>
 
+    @if (apiError) {
+      <div class="error-msg" style="margin-bottom: 15px; color: #b91c1c; font-weight: 600; text-align: center; border: 1px solid #fca5a5; background-color: #fee2e2; padding: 10px; border-radius: 8px;">
+        <p style="margin: 0; font-size: 13px;">{{ apiError }}</p>
+      </div>
+    }
+
     <form [formGroup]="logForm" (ngSubmit)="Login()">
 
       <div class="form-group">
@@ -79,8 +85,8 @@
 
       </div>
 
-      <button type="submit" class="auth-btn">
-        Login
+      <button type="submit" class="auth-btn" [disabled]="isLoading">
+        {{ isLoading ? 'Logging in...' : 'Login' }}
       </button>
 
       <p class="auth-footer-text">

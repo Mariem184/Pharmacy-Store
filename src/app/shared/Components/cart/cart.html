@@ -1,0 +1,264 @@
+<div class="cart-overlay" [class.open]="cartService.isDrawerOpen()" (click)="closeCart()"></div>
+
+<div class="cart-drawer" [class.open]="cartService.isDrawerOpen()">
+  <!-- Header -->
+  <div class="cart-header">
+    <div class="header-title-box">
+      <h2>Your Cart</h2>
+      <span class="items-count">{{ cartService.cartCount() }} items</span>
+    </div>
+    <button class="close-btn" (click)="closeCart()" title="Close Cart">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+
+  <!-- Body -->
+  <div class="cart-body">
+    <div *ngIf="cartService.cartItems().length === 0" class="empty-cart">
+      <i class="fa-solid fa-cart-shopping empty-icon"></i>
+      <p class="empty-title">Your cart is empty</p>
+      <p class="empty-desc">Add products to your cart to see them here.</p>
+    </div>
+
+    <div *ngIf="cartService.cartItems().length > 0" class="cart-items-list">
+      <div *ngFor="let item of cartService.cartItems()" class="cart-item">
+        <div class="item-img-box">
+          <img [src]="item.image" [alt]="item.name">
+        </div>
+        <div class="item-info">
+          <h4 class="item-name">{{ item.name }}</h4>
+          <span class="item-brand">{{ item.brand }}</span>
+          <div class="qty-control">
+            <button class="qty-btn" (click)="updateQuantity(item.id, -1)">−</button>
+            <span class="qty-val">{{ item.quantity }}</span>
+            <button class="qty-btn" (click)="updateQuantity(item.id, 1)">+</button>
+          </div>
+        </div>
+        <div class="item-actions">
+          <span class="item-price">EGP {{ item.price * item.quantity | number:'1.2-2' }}</span>
+          <button class="remove-btn" (click)="removeItem(item.id)" title="Remove item">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="cart-footer" *ngIf="cartService.cartItems().length > 0">
+    <div class="subtotal-row">
+      <span class="label">Subtotal</span>
+      <span class="value">EGP {{ cartService.cartSubtotal() | number:'1.2-2' }}</span>
+    </div>
+
+    <!-- Free Delivery Info -->
+    <div class="delivery-info" [class.free]="cartService.isFreeDeliveryApplied()">
+      <span class="delivery-icon">
+        <i class="fa-solid fa-truck"></i>
+      </span>
+      <span class="delivery-text" *ngIf="cartService.isFreeDeliveryApplied()">
+        Free delivery applied
+      </span>
+      <span class="delivery-text" *ngIf="!cartService.isFreeDeliveryApplied()">
+        Add EGP {{ 500 - cartService.cartSubtotal() | number:'1.2-2' }} more for free delivery
+      </span>
+    </div>
+
+    <!-- Checkout Button -->
+    <button class="checkout-btn" (click)="openCheckout()">
+      Checkout — EGP {{ cartService.cartSubtotal() | number:'1.2-2' }}
+    </button>
+  </div>
+</div>
+
+<!-- Checkout Modal Overlay -->
+<div class="checkout-overlay" [class.open]="cartService.isCheckoutOpen()">
+  <div class="checkout-modal" [class.open]="cartService.isCheckoutOpen()">
+    
+    <!-- Header -->
+    <div class="checkout-header">
+      <h3>Secure Checkout</h3>
+      <button class="close-btn" (click)="closeCheckout()" [disabled]="isProcessingPayment">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="checkout-body">
+      
+      <!-- Processing State -->
+      <div *ngIf="isProcessingPayment" class="checkout-status-panel">
+        <div class="payment-spinner"></div>
+        <h4>Processing Secure Payment...</h4>
+        <p>Please do not refresh or close this window.</p>
+      </div>
+
+      <!-- Success State -->
+      <div *ngIf="isOrderCompleted" class="checkout-success-panel">
+        <div class="success-icon-wrap">
+          <i class="fa-solid fa-circle-check"></i>
+        </div>
+        <h3>Order Placed Successfully!</h3>
+        <p class="success-message">Thank you for your order. We have sent a confirmation email with details to your registered address.</p>
+        
+        <div class="order-ref-box">
+          <span class="ref-label">Order Reference ID:</span>
+          <span class="ref-val">{{ generatedOrderId }}</span>
+        </div>
+
+        <div class="success-delivery-notice">
+          <i class="fa-solid fa-truck-fast"></i>
+          <span>Expected Delivery: <strong>Tomorrow</strong></span>
+        </div>
+
+        <button class="dismiss-btn" (click)="closeCheckout()">Back to Store</button>
+      </div>
+
+      <!-- Form Mode -->
+      <div *ngIf="!isProcessingPayment && !isOrderCompleted" class="checkout-form-grid">
+        
+        <!-- Step 1: Shipping Details -->
+        <div class="checkout-section">
+          <div class="section-title">
+            <span class="step-num">1</span>
+            <h4>Shipping Information</h4>
+          </div>
+          
+          <div class="form-group">
+            <label>Full Name *</label>
+            <input type="text" [(ngModel)]="shippingName" placeholder="Enter your full name" required>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group half">
+              <label>Phone Number *</label>
+              <input type="tel" [(ngModel)]="shippingPhone" placeholder="e.g. 01012345678" required>
+            </div>
+            <div class="form-group half">
+              <label>City *</label>
+              <select [(ngModel)]="shippingCity">
+                <option value="Cairo">Cairo</option>
+                <option value="Giza">Giza</option>
+                <option value="Alexandria">Alexandria</option>
+                <option value="Delta">Delta Region</option>
+                <option value="UpperEgypt">Upper Egypt</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label>Street Address *</label>
+            <textarea [(ngModel)]="shippingAddress" rows="2" placeholder="Building no., Street name, Floor..." required></textarea>
+          </div>
+        </div>
+
+        <!-- Step 2: Payment Options -->
+        <div class="checkout-section">
+          <div class="section-title">
+            <span class="step-num">2</span>
+            <h4>Select Payment Method</h4>
+          </div>
+
+          <div class="payment-method-selector">
+            <!-- COD -->
+            <div class="pay-method-card" [class.selected]="selectedPaymentMethod === 'cod'" (click)="selectPaymentMethod('cod')">
+              <div class="method-header">
+                <i class="fa-solid fa-money-bill-wave icon"></i>
+                <span class="title">Cash on Delivery</span>
+              </div>
+              <p class="desc">Pay with cash upon package receipt.</p>
+            </div>
+
+            <!-- Card -->
+            <div class="pay-method-card" [class.selected]="selectedPaymentMethod === 'card'" (click)="selectPaymentMethod('card')">
+              <div class="method-header">
+                <i class="fa-solid fa-credit-card icon"></i>
+                <span class="title">Credit / Debit Card</span>
+              </div>
+              <p class="desc">Visa, Mastercard, or Maestro.</p>
+            </div>
+
+            <!-- Wallet -->
+            <div class="pay-method-card" [class.selected]="selectedPaymentMethod === 'instapay'" (click)="selectPaymentMethod('instapay')">
+              <div class="method-header">
+                <i class="fa-solid fa-mobile-screen icon"></i>
+                <span class="title">Instapay / Mobile Wallet</span>
+              </div>
+              <p class="desc">Vodafone Cash, Instapay handle.</p>
+            </div>
+          </div>
+
+          <!-- Payment Forms Details -->
+          <div class="payment-details-form-box">
+            
+            <!-- COD Details -->
+            <div *ngIf="selectedPaymentMethod === 'cod'" class="payment-details-info">
+              <i class="fa-solid fa-hand-holding-dollar"></i>
+              <p>An extra EGP 10 cash-handling fee might apply. Please make sure you have the exact amount ready upon delivery.</p>
+            </div>
+
+            <!-- Card Form -->
+            <div *ngIf="selectedPaymentMethod === 'card'" class="card-payment-form">
+              <div class="form-group">
+                <label>Cardholder Name</label>
+                <input type="text" [(ngModel)]="cardHolder" placeholder="Name as printed on card">
+              </div>
+              <div class="form-group">
+                <label>Card Number</label>
+                <input type="text" [(ngModel)]="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19">
+              </div>
+              <div class="form-row">
+                <div class="form-group half">
+                  <label>Expiry Date</label>
+                  <input type="text" [(ngModel)]="cardExpiry" placeholder="MM/YY" maxlength="5">
+                </div>
+                <div class="form-group half">
+                  <label>CVV / CVC</label>
+                  <input type="password" [(ngModel)]="cardCvv" placeholder="123" maxlength="3">
+                </div>
+              </div>
+            </div>
+
+            <!-- Instapay Form -->
+            <div *ngIf="selectedPaymentMethod === 'instapay'" class="wallet-payment-form">
+              <div class="form-group">
+                <label>Mobile Wallet Number / Instapay Address</label>
+                <input type="text" [(ngModel)]="mobileNumber" placeholder="e.g. 01012345678 or handle@instapay">
+              </div>
+              <div class="payment-details-info">
+                <i class="fa-solid fa-circle-info"></i>
+                <p>A secure verification prompt will be sent to your mobile wallet app to approve the transaction.</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Footer Summary -->
+    <div class="checkout-footer" *ngIf="!isProcessingPayment && !isOrderCompleted">
+      <div class="summary-details">
+        <div class="summary-line">
+          <span>Items Subtotal:</span>
+          <span>EGP {{ cartService.cartSubtotal() | number:'1.2-2' }}</span>
+        </div>
+        <div class="summary-line">
+          <span>Shipping Fee:</span>
+          <span *ngIf="cartService.isFreeDeliveryApplied()">Free</span>
+          <span *ngIf="!cartService.isFreeDeliveryApplied()">EGP 50.00</span>
+        </div>
+        <div class="summary-line total">
+          <span>Grand Total:</span>
+          <span>EGP {{ (cartService.cartSubtotal() + (cartService.isFreeDeliveryApplied() ? 0 : 50)) | number:'1.2-2' }}</span>
+        </div>
+      </div>
+
+      <button class="confirm-order-btn" (click)="submitPayment()">
+        <i class="fa-solid fa-shield-halved"></i> Confirm Payment & Place Order
+      </button>
+    </div>
+
+  </div>
+</div>

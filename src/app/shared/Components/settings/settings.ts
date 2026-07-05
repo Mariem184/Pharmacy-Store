@@ -32,7 +32,7 @@ export class SettingsComponent implements OnInit {
     this.settingsService.getSettings().subscribe(data => {
       this.settings = data;
       
-      const savedAlertSetting = localStorage.getItem('lowStockAlert');
+      const savedAlertSetting = typeof localStorage !== 'undefined' ? localStorage.getItem('lowStockAlert') : null;
       if (savedAlertSetting !== null) {
         this.settings.lowStockAlert = savedAlertSetting === 'true';
       }

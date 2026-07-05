@@ -15,4 +15,13 @@ export class Hero {
     { icon: 'fa-regular fa-clock', title: 'Same-day dispatch', desc: 'Order by 2pm' },
     { icon: 'fa-solid fa-heart-pulse', title: 'Health advice', desc: 'Talk to our team' }
   ];
+
+  scrollToProducts() {
+    if (typeof document !== 'undefined') {
+      const element = document.getElementById('products-section');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  }
 }

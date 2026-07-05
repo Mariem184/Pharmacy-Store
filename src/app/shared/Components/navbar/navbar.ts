@@ -1,9 +1,10 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectorRef, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router'; 
 import { ProductService } from '../../../core/Services/product.services';
 import { AuthService } from '../../../core/Services/auth';
+import { CartService } from '../../../core/Services/cart.service';
 @Component({
   selector: 'app-navbar',
   standalone: true,
@@ -11,31 +12,53 @@ import { AuthService } from '../../../core/Services/auth';
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
 })
-export class Navbar {
-isLoggesIn: boolean = false;
+export class Navbar implements OnInit {
+  isLoggesIn: boolean = false;
+  isAdmin: boolean = false;
+  private isInitialized = false;
 
- searchQuery: string = '';
+  searchQuery: string = '';
 
-  constructor(private productService: ProductService, private _AuthService: AuthService) {
+  constructor(
+    private productService: ProductService, 
+    private _AuthService: AuthService,
+    public cartService: CartService,
+    private cdr: ChangeDetectorRef
+  ) {}
+
+  ngOnInit() {
     this._AuthService.userData.subscribe({
       next:(res)=>{
         console.log(res);
         if(res != null){
           this.isLoggesIn = true;
+          this.isAdmin = this._AuthService.isAdmin();
         }else{
           this.isLoggesIn = false;
+          this.isAdmin = false;
+        }
+        if (this.isInitialized) {
+          this.cdr.detectChanges();
         }
       }
-    })
+    });
+    this.isInitialized = true;
+    this.cdr.detectChanges();
   }
 
   onSearch() {
     this.productService.searchQuery = this.searchQuery;
-    window.dispatchEvent(new CustomEvent('search-triggered'));
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('search-triggered'));
+    }
   }
 
 
   logout(){
     this._AuthService.logout();
+  }
+
+  toggleCart() {
+    this.cartService.toggleDrawer();
   }
 }

@@ -1,36 +1,54 @@
-import { Component, OnInit, ChangeDetectorRef, Input, OnDestroy } from '@angular/core'; 
+import { Component, OnInit, ChangeDetectorRef, Input, OnDestroy, signal } from '@angular/core'; 
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { ProductService } from '../../../core/Services/product.services';
+import { RouterLink } from '@angular/router';
+import { CartService } from '../../../core/Services/cart.service';
 
 @Component({
   selector: 'app-product-card',
-  imports: [CommonModule, HttpClientModule],
+  imports: [CommonModule, HttpClientModule, RouterLink],
   standalone: true,
   templateUrl: './product-card.html',
   styleUrl: './product-card.css',
 })
 export class ProductCard implements OnInit, OnDestroy {
   
-  @Input() currentCategory: string = 'all'; 
+  private _currentCategory: string = 'all';
 
-  products: any[] = [];        
-  filteredProducts: any[] = [];
+  @Input()
+  set currentCategory(value: string) {
+    this._currentCategory = value;
+    this.filterByCategory(value);
+  }
+
+  get currentCategory(): string {
+    return this._currentCategory;
+  }
+
+  // Use Angular Signals to trigger reactive updates under Zoneless CD
+  products = signal<any[]>([]);        
+  filteredProducts = signal<any[]>([]);
   totalProducts: number = 0;
 
   constructor(
     private http: HttpClient, 
     private productService: ProductService,
+    private cartService: CartService,
     private cdr: ChangeDetectorRef 
   ) {}
 
   ngOnInit(): void {
     this.fetchProductsFromAPI(); 
-    window.addEventListener('search-triggered', this.handleNavbarSearch);
+    if (typeof window !== 'undefined') {
+      window.addEventListener('search-triggered', this.handleNavbarSearch);
+    }
   }
 
   ngOnDestroy(): void {
-    window.removeEventListener('search-triggered', this.handleNavbarSearch);
+    if (typeof window !== 'undefined') {
+      window.removeEventListener('search-triggered', this.handleNavbarSearch);
+    }
   }
 
   handleNavbarSearch = () => {
@@ -43,18 +61,17 @@ export class ProductCard implements OnInit, OnDestroy {
     this.http.get<any>(cacheBuster)
       .subscribe({
         next: (response) => {
-          this.products = response.products;      
-          this.totalProducts = this.products.length; 
+          const prods = response.products || [];
+          this.products.set(prods);      
+          this.totalProducts = prods.length; 
           
           if (this.productService.searchQuery) {
             this.filterBySearch(this.productService.searchQuery);
           } else if (!this.currentCategory || this.currentCategory.toLowerCase().includes('all')) {
-            this.filteredProducts = this.products; 
+            this.filteredProducts.set(prods); 
           } else {
             this.filterByCategory(this.currentCategory);
           }
-
-          this.cdr.detectChanges();
         },
         error: (err) => {
           console.error('حدث خطأ أثناء جلب البيانات الطبية:', err);
@@ -65,29 +82,27 @@ export class ProductCard implements OnInit, OnDestroy {
   filterBySearch(query: string) {
     if (!query || query.trim() === '') {
       if (!this.currentCategory || this.currentCategory.toLowerCase().includes('all')) {
-        this.filteredProducts = this.products;
+        this.filteredProducts.set(this.products());
       } else {
         this.filterByCategory(this.currentCategory);
       }
-      this.cdr.detectChanges();
       return;
     }
     
     const cleanQuery = query.toLowerCase().trim();
-    this.filteredProducts = this.products.filter(prod => 
+    const matches = this.products().filter(prod => 
       prod.name && prod.name.toLowerCase().includes(cleanQuery)
     );
-    this.cdr.detectChanges();
+    this.filteredProducts.set(matches);
   }
 
   filterByCategory(categoryName: string) {
-    this.currentCategory = categoryName; 
+    this._currentCategory = categoryName; 
 
-    if (!this.products || this.products.length === 0) return;
+    if (!this.products() || this.products().length === 0) return;
 
     if (!categoryName || categoryName.trim() === '' || categoryName.toLowerCase().includes('all')) {
-      this.filteredProducts = this.products;
-      this.cdr.detectChanges();
+      this.filteredProducts.set(this.products());
       return;
     }
 
@@ -104,8 +119,8 @@ export class ProductCard implements OnInit, OnDestroy {
     const selectedClean = categoryName.trim().toLowerCase();
     const arabicTranslation = categoryMapping[selectedClean] || selectedClean;
 
-    this.filteredProducts = this.products.filter(prod => {
-      const targetField = prod.badgeType || prod.category || '';
+    const matches = this.products().filter(prod => {
+      const targetField = prod.category || '';
       const prodClean = targetField.trim().toLowerCase();
       
       return prodClean === selectedClean || 
@@ -114,7 +129,7 @@ export class ProductCard implements OnInit, OnDestroy {
              arabicTranslation.includes(prodClean);
     });
 
-    this.cdr.detectChanges(); 
+    this.filteredProducts.set(matches);
   }
 
   getDiscount(price: number, oldPrice?: number): number {
@@ -122,10 +137,7 @@ export class ProductCard implements OnInit, OnDestroy {
     return Math.round(((oldPrice - price) / oldPrice) * 100);
   }
 
-  cartItems: any[] = []; 
-
   addToCart(product: any) {
-    console.log('Added to cart:', product.name); 
-    this.cartItems.push(product); 
+    this.cartService.addToCart(product);
   }
 }

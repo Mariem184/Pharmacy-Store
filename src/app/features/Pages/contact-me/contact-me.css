@@ -161,3 +161,20 @@
     grid-template-columns: 1fr;
   }
 }
+@media (max-width: 576px) {
+  .contact-page-container {
+    padding: 30px 10px;
+  }
+  .contact-info-sidebar {
+    padding: 30px 20px;
+  }
+  .contact-form-area {
+    padding: 30px 20px;
+  }
+  .sidebar-header h2 {
+    font-size: 24px;
+  }
+  .contact-form-area h2 {
+    font-size: 22px;
+  }
+}

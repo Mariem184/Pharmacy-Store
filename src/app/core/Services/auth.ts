@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { Auth } from '../../shared/interface/auth';
+import { Auth } from '../../shared/Interface/auth';
 import { jwtDecode, JwtPayload } from 'jwt-decode';
 import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
@@ -23,9 +23,21 @@ export class AuthService {
 
   decodeUserdata() {
     const token = localStorage.getItem('userToken')!;
-    const decode = jwtDecode(token);
+    const decode = jwtDecode(token) as any;
+    if (typeof localStorage !== 'undefined') {
+      const email = localStorage.getItem('userEmail');
+      if (email) {
+        decode.email = email;
+      }
+    }
     this.userData.next(decode);
     console.log(decode);
+  }
+
+  isAdmin(): boolean {
+    const user = this.userData.value as any;
+    if (!user) return false;
+    return user.role === 'admin' || (user.email && user.email.toLowerCase().includes('admin'));
   }
 
   login(data: Auth): Observable<any> {
@@ -38,6 +50,7 @@ export class AuthService {
 
   logout(){
     localStorage.removeItem('userToken');
+    localStorage.removeItem('userEmail');
     this.userData.next(null);
     this._Router.navigate(['/auth/login'])
   }

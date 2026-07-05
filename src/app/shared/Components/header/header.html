@@ -1,5 +1,8 @@
 <header class="navbar">
     <div class="breadcramb">
+        <button class="menu-toggle-btn" (click)="toggleSidebar()" title="Toggle Menu">
+            <i class="fa-solid fa-bars"></i>
+        </button>
         <span class="brand-name">MediStore </span>
         <span class="separator">&gt;</span>
         <span class="page-name"> Admin</span>
@@ -25,7 +28,7 @@
             </div>
         </div>
         <div class="profile-wrapper">
-            <div class="profile-circle">AM</div>
+            <div class="profile-circle">{{ adminInitials }}</div>
         </div>
     </div>
 </header>

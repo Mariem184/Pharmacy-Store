@@ -138,3 +138,22 @@
   line-height: 1.6;
   margin: 0;
 }
+
+@media (max-width: 768px) {
+  .about-hero {
+    padding: 100px 20px;
+  }
+  .about-hero h1 {
+    font-size: 32px;
+  }
+  .about-hero p {
+    font-size: 15px;
+  }
+  .about-details-container {
+    padding: 40px 15px;
+  }
+  .info-card {
+    padding: 24px;
+  }
+}
+

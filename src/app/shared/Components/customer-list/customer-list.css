@@ -89,8 +89,7 @@
 }
 .stats{
     display: flex;
-    justify-content: center;
-    gap: 160px;
+    justify-content: space-between;
     margin-top: 15px;
     padding-top: 10px;
     border-top: 1px solid #eee;
@@ -106,4 +105,52 @@
     font-size: 0.7rem;
     color: #888;
     letter-spacing: 0.5px;
+}
+
+.delete-btn {
+    margin-left: auto;
+    align-self: flex-start;
+    margin-top: -2px;
+    background: none;
+    border: none;
+    color: #9ca3af;
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s ease-in-out;
+}
+.delete-btn:hover {
+    background-color: #f3f4f6;
+    color: #4b5563;
+}
+
+@media (max-width: 992px) {
+  .cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .search-and-filters {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .search-input {
+    width: 100%;
+  }
+  .filter-buttons {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 576px) {
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+  .customer-container {
+    padding: 16px;
+  }
 }

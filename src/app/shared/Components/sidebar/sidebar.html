@@ -1,6 +1,10 @@
-<nav class="sidebar">
+<div class="sidebar-overlay" *ngIf="isOpen" (click)="onClose()"></div>
+<nav class="sidebar" [class.mobile-open]="isOpen">
     <div class="sidebar-header">
         <h2>Medi<span>Store</span></h2>
+        <button class="sidebar-close-btn" (click)="onClose()" title="Close Menu">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
         <h6>ADMIN PANEL</h6>
     </div>
 
@@ -20,8 +24,9 @@
     </ul>
 
     <div class="sidebar-footer">
-        <div class="admin-info">
-            <span class="admin-name">{{ adminName }}</span> 
+        <div class="admin-info" style="display: flex; flex-direction: column; align-items: flex-start;">
+            <span class="admin-name" style="font-weight: bold; font-size: 0.9rem; color: #fff;">{{ adminName }}</span> 
+            <span class="admin-email" style="font-size: 0.75rem; color: #9ca3af; margin-top: 2px; word-break: break-all;">{{ adminEmail }}</span> 
         </div>
         
         <button class="logout-btn" (click)="logout()" title="log out">

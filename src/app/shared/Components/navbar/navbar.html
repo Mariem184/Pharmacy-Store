@@ -1,7 +1,7 @@
 <div class="top-bar">
   <div class="top-bar-left">
     <span><i class="fas fa-phone"></i> 1-800-PHARMA</span>
-    <span><i class="fas fa-map-marker-alt"></i> Find a store</span>
+    <span routerLink="/location" style="cursor: pointer;"><i class="fas fa-map-marker-alt"></i> Find a store</span>
   </div>
 
   <div class="top-bar-right">
@@ -37,6 +37,10 @@
 
     <button class="action-btn" routerLink="/home">Home</button>
 
+    @if (isLoggesIn && isAdmin) {
+      <button class="action-btn" routerLink="/admin/settings">Dashboard</button>
+    }
+
     <button class="action-btn" routerLink="/location">
       Location
     </button>
@@ -55,9 +59,14 @@
         <i class="fa-solid fa-bell"></i>
       </button>
 
-      <button routerLink="/cart" class="cart-btn">
-        <i class="fas fa-shopping-cart"></i>
-      </button>
+      @if (!isAdmin) {
+        <button (click)="toggleCart()" class="cart-btn" style="position: relative;">
+          <i class="fas fa-shopping-cart"></i>
+          <span *ngIf="cartService.cartCount() > 0" style="position: absolute; top: -5px; right: -5px; background-color: #ef4444; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7rem; font-weight: bold; min-width: 18px; text-align: center;">
+            {{ cartService.cartCount() }}
+          </span>
+        </button>
+      }
 
       <button class="logout-btn" (click)="logout()">
         <i class="fa-solid fa-right-from-bracket"></i>

@@ -24,6 +24,9 @@
                     <div class="name"><strong>{{customer.name}}</strong></div>
                     <div class="date"><p>Since {{customer.createdAt | date:'yyyy-MM-dd'}}</p></div>
                 </div>
+                <button class="delete-btn" (click)="deleteCustomer(customer._id)" title="Delete Customer">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
             </div>
             <div class="card-bottom">
                 <p><i class="fa-solid fa-envelope"></i> {{customer.email}}</p>

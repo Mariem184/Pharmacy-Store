@@ -1,7 +1,7 @@
 <div class="products-section">
   <div class="category-title-container">
     <h2 class="category-display-title">{{ currentCategory }}</h2>
-    <span class="count-text">{{ filteredProducts.length }} products found</span>
+    <span class="count-text">{{ filteredProducts().length }} products found</span>
   </div>
 
   <div class="products-header">
@@ -21,9 +21,9 @@
   </div>
 
   <div class="products-grid">
-    <div *ngFor="let prod of filteredProducts" class="product-card" [class.out-of-stock]="!prod.inStock">
+    <div *ngFor="let prod of filteredProducts()" class="product-card" [class.out-of-stock]="!prod.inStock">
       
-      <div class="image-wrapper">
+      <div class="image-wrapper" [routerLink]="['/product-details', prod.id]" style="cursor: pointer;">
         <img [src]="prod.image" [alt]="prod.name" class="product-img">
         
         <span *ngIf="prod.badge" class="badge" [ngClass]="prod.badgeType">
@@ -41,7 +41,7 @@
 
       <div class="product-info">
         <span class="product-brand">{{ prod.brand }}</span>
-        <h3 class="product-title">{{ prod.name }}</h3>
+        <h3 class="product-title" [routerLink]="['/product-details', prod.id]" style="cursor: pointer;">{{ prod.name }}</h3>
         <p class="product-desc">{{ prod.description }}</p>
 
         <div class="rating-container">
@@ -54,8 +54,8 @@
 
         <div class="card-footer">
           <div class="price-box">
-            <span class="current-price">${{ prod.price }}</span>
-            <span *ngIf="prod.oldPrice" class="old-price">${{ prod.oldPrice }}</span>
+            <span class="current-price">EGP {{ prod.price }}</span>
+            <span *ngIf="prod.oldPrice" class="old-price">EGP {{ prod.oldPrice }}</span>
           </div>
           
           <button 

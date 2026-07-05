@@ -22,6 +22,12 @@
       Create a new account to get started.
     </p>
 
+    @if (apiError) {
+      <div class="error-msg" style="margin-bottom: 15px; color: #b91c1c; font-weight: 600; text-align: center; border: 1px solid #fca5a5; background-color: #fee2e2; padding: 10px; border-radius: 8px;">
+        <p style="margin: 0; font-size: 13px;">{{ apiError }}</p>
+      </div>
+    }
+
     <form [formGroup]="regForm" (ngSubmit)="Register()">
 
       <div class="form-group">
@@ -155,8 +161,8 @@
 
       </div>
 
-      <button type="submit" class="auth-btn">
-        Register
+      <button type="submit" class="auth-btn" [disabled]="isLoading">
+        {{ isLoading ? 'Registering...' : 'Register' }}
       </button>
 
       <p class="auth-footer-text">
