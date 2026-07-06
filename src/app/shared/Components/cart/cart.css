@@ -751,3 +751,52 @@
   0% { transform: scale(0.85); opacity: 0; }
   100% { transform: scale(1); opacity: 1; }
 }
+
+/* Order Cards & Status Badges inside Cart Tracker Tab */
+.cart-orders-list {
+  padding-bottom: 20px;
+}
+
+.order-card {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.order-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.status-badge.pending {
+  background-color: #fff9db !important;
+  color: #f59f00 !important;
+}
+
+.status-badge.processing {
+  background-color: #e7f5ff !important;
+  color: #1c7ed6 !important;
+}
+
+.status-badge.shipped {
+  background-color: #f3f0ff !important;
+  color: #7048e8 !important;
+}
+
+.status-badge.delivered {
+  background-color: #e6fcf5 !important;
+  color: #0ca678 !important;
+}
+
+.status-badge.cancelled {
+  background-color: #fff0f6 !important;
+  color: #f03e3e !important;
+}
