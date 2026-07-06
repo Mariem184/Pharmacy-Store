@@ -19,6 +19,8 @@ export interface Order {
   total: number;
   paymentMethod: string;
   shippingAddress: string;
+  rating?: number;
+  reviewComment?: string;
 }
 
 @Injectable({
@@ -149,6 +151,14 @@ export class OrderService {
 
   updateOrderStatus(orderId: string, status: Order['status']) {
     const updated = this.orders().map(o => o.orderId === orderId ? { ...o, status } : o);
+    this.orders.set(updated);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('pharmacy_orders', JSON.stringify(updated));
+    }
+  }
+
+  updateOrderReview(orderId: string, rating: number, comment: string) {
+    const updated = this.orders().map(o => o.orderId === orderId ? { ...o, rating, reviewComment: comment } : o);
     this.orders.set(updated);
     if (typeof window !== 'undefined') {
       localStorage.setItem('pharmacy_orders', JSON.stringify(updated));

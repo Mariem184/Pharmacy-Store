@@ -145,6 +145,23 @@
               </select>
             </div>
           </div>
+          
+          <!-- Customer Feedback & Problems Card -->
+          <div class="overview-card rating-feedback-card" *ngIf="selectedOrder.rating" style="grid-column: 1 / -1; border-color: #ffe066; background-color: #fffbeb;">
+            <h4 style="color: #f59f00; border-bottom-color: #ffe066; border-bottom-style: dashed;">Customer Feedback & Problems</h4>
+            <p>
+              <strong>Rating:</strong>
+              <span style="color: #f59f00; margin-left: 5px; display: inline-flex; gap: 3px;">
+                <i class="fas fa-star" *ngFor="let s of [1,2,3,4,5]" [style.color]="s <= selectedOrder.rating ? '#f59f00' : '#e9ecef'"></i>
+              </span>
+            </p>
+            <p *ngIf="selectedOrder.reviewComment" style="margin-bottom: 0;">
+              <strong>Reported Problem / Comment:</strong>
+              <span style="color: #495057; font-style: italic; background-color: #ffffff; padding: 8px 12px; border-radius: 4px; display: inline-block; margin-top: 6px; border: 1px solid #ffe3e3; width: 100%; box-sizing: border-box;">
+                "{{ selectedOrder.reviewComment }}"
+              </span>
+            </p>
+          </div>
         </div>
 
         <!-- Items Table -->

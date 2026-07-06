@@ -104,6 +104,53 @@
             Confirm Delivery
           </button>
         </div>
+
+        <!-- Rating & Feedback Section (Only for Delivered orders) -->
+        <div class="order-rating-box" *ngIf="order.status === 'Delivered'" style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed #dee2e6; display: flex; flex-direction: column; gap: 8px;">
+          <!-- If already reviewed -->
+          <div *ngIf="order.rating" class="already-rated" style="font-size: 13px; color: #495057;">
+            <div style="display: flex; align-items: center; gap: 5px; margin-bottom: 4px;">
+              <span style="font-weight: 600; color: #6c757d;">Your Rating:</span>
+              <span style="color: #f59f00; display: inline-flex; gap: 2px;">
+                <i class="fa-solid fa-star" *ngFor="let s of [1,2,3,4,5]" [style.color]="s <= order.rating ? '#f59f00' : '#e9ecef'"></i>
+              </span>
+            </div>
+            <p *ngIf="order.reviewComment" style="margin: 0; font-size: 12px; color: #6b7280; font-style: italic; background-color: #f1f3f5; padding: 6px 10px; border-radius: 4px;">
+              "{{ order.reviewComment }}"
+            </p>
+          </div>
+
+          <!-- If not yet reviewed, show form -->
+          <div *ngIf="!order.rating" class="rate-form" style="display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 12px; font-weight: bold; color: #495057;">Rate your order:</span>
+              <!-- Star selection -->
+              <div class="stars-select" style="display: flex; gap: 4px;">
+                <button 
+                  *ngFor="let star of [1,2,3,4,5]"
+                  (click)="selectStar(order.orderId, star)"
+                  style="border: none; background: none; padding: 0; cursor: pointer; font-size: 16px;"
+                  [title]="'Rate ' + star + ' stars'">
+                  <i class="fa-solid fa-star" [style.color]="star <= (orderRatings[order.orderId] || 5) ? '#f59f00' : '#e9ecef'"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Problem / Comment area -->
+            <textarea 
+              [(ngModel)]="orderComments[order.orderId]"
+              placeholder="Report any problems or leave your feedback here..."
+              rows="2"
+              style="width: 100%; border: 1px solid #ced4da; border-radius: 6px; padding: 8px; font-size: 12px; outline: none; resize: none; font-family: inherit; transition: border-color 0.2s; box-sizing: border-box;">
+            </textarea>
+
+            <button 
+              (click)="submitOrderReview(order.orderId)"
+              style="align-self: flex-end; background-color: #0b593e; border: none; color: #ffffff; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; transition: background-color 0.2s;">
+              Submit Feedback
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>

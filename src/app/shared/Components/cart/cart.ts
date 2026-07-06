@@ -62,6 +62,21 @@ export class Cart implements OnInit {
     }
   }
 
+  orderRatings: { [orderId: string]: number } = {};
+  orderComments: { [orderId: string]: string } = {};
+
+  selectStar(orderId: string, rating: number) {
+    this.orderRatings[orderId] = rating;
+  }
+
+  submitOrderReview(orderId: string) {
+    const rating = this.orderRatings[orderId] || 5;
+    const comment = this.orderComments[orderId] || '';
+    
+    this.orderService.updateOrderReview(orderId, rating, comment);
+    alert('Thank you for your feedback! Your review has been saved.');
+  }
+
   closeCart() {
     this.cartService.closeDrawer();
   }
