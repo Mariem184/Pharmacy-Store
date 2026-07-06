@@ -128,7 +128,7 @@ export class ProductDetails implements OnInit {
   setTab(tab: string)    { this.activeTab = tab; }
   addToCart() {
     if (!this.authService.userData.value) {
-      this.router.navigate(['/login']);
+      this.router.navigate(['/auth/login']);
       return;
     }
     if (this.product) {

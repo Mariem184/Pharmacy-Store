@@ -142,7 +142,7 @@ export class ProductCard implements OnInit, OnDestroy {
 
   addToCart(product: any) {
     if (!this.authService.userData.value) {
-      this.router.navigate(['/login']);
+      this.router.navigate(['/auth/login']);
       return;
     }
     this.cartService.addToCart(product);
