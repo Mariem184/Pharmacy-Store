@@ -35,6 +35,7 @@ export class Cart implements OnInit {
   isProcessingPayment = false;
   isOrderCompleted = false;
   generatedOrderId = '';
+  activeTab: 'cart' | 'orders' = 'cart';
 
   constructor(
     public cartService: CartService,
@@ -43,6 +44,23 @@ export class Cart implements OnInit {
   ) {}
 
   ngOnInit(): void {}
+
+  get customerOrders() {
+    const email = (this.authService.userData.value as any)?.email || 'guest@email.com';
+    return this.orderService.orders().filter(o => o.customerEmail === email);
+  }
+
+  cancelOrder(orderId: string) {
+    if (confirm('Are you sure you want to cancel this order?')) {
+      this.orderService.updateOrderStatus(orderId, 'Cancelled');
+    }
+  }
+
+  confirmArrival(orderId: string) {
+    if (confirm('Confirm that you have received this order?')) {
+      this.orderService.updateOrderStatus(orderId, 'Delivered');
+    }
+  }
 
   closeCart() {
     this.cartService.closeDrawer();
