@@ -1,21 +1,11 @@
 <div class="top-bar">
   <div class="top-bar-left">
     <span><i class="fas fa-phone"></i> 1-800-PHARMA</span>
-    <span routerLink="/location" style="cursor: pointer;">
-      <i class="fas fa-map-marker-alt"></i> 
-      {{ langService.currentLang() === 'en' ? 'Find a store' : 'ابحث عن فرع' }}
-    </span>
+    <span routerLink="/location" style="cursor: pointer;"><i class="fas fa-map-marker-alt"></i> Find a store</span>
   </div>
 
-  <div class="top-bar-right" style="display: flex; align-items: center; gap: 15px;">
-    <span>
-      <i class="fas fa-clock"></i> 
-      {{ langService.currentLang() === 'en' ? 'Mon-Sat 8am-9pm · Sun 9am-6pm' : 'الإثنين-السبت 8ص-9م · الأحد 9ص-6م' }}
-    </span>
-    <button class="lang-toggle-btn" (click)="toggleLanguage()" style="background: none; border: 1px solid rgba(255,255,255,0.4); color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px; cursor: pointer; display: flex; align-items: center; gap: 4px; font-weight: 500;">
-      <i class="fa-solid fa-globe"></i>
-      {{ langService.currentLang() === 'en' ? 'العربية' : 'English' }}
-    </button>
+  <div class="top-bar-right">
+    <span><i class="fas fa-clock"></i> Mon-Sat 8am-9pm · Sun 9am-6pm</span>
   </div>
 </div>
 
@@ -33,7 +23,7 @@
     <div class="search-bar-container">
       <input
         type="text"
-        [placeholder]="langService.currentLang() === 'en' ? 'Search medicines, vitamins, brands...' : 'ابحث عن الأدوية، الفيتامينات، الماركات...'"
+        placeholder="Search medicines, vitamins, brands..."
         class="search-input"
         [(ngModel)]="searchQuery"
         (keyup.enter)="onSearch()"
@@ -45,26 +35,22 @@
 
   <div class="header-actions">
 
-    <button class="action-btn" routerLink="/home">
-      {{ langService.currentLang() === 'en' ? 'Home' : 'الرئيسية' }}
-    </button>
+    <button class="action-btn" routerLink="/home">Home</button>
 
     @if (isLoggesIn && isAdmin) {
-      <button class="action-btn" routerLink="/admin/settings">
-        {{ langService.currentLang() === 'en' ? 'Dashboard' : 'لوحة التحكم' }}
-      </button>
+      <button class="action-btn" routerLink="/admin/settings">Dashboard</button>
     }
 
     <button class="action-btn" routerLink="/location">
-      {{ langService.currentLang() === 'en' ? 'Location' : 'الفروع' }}
+      Location
     </button>
 
     <button class="action-btn" routerLink="/about-us">
-      {{ langService.currentLang() === 'en' ? 'About Us' : 'من نحن' }}
+      About Us
     </button>
 
     <button class="action-btn" routerLink="/contact-me">
-      {{ langService.currentLang() === 'en' ? 'Contact Me' : 'تواصل معي' }}
+      Contact Me
     </button>
 
     @if (isLoggesIn) {

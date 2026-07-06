@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from "@angular/router";
-import { LanguageService } from '../../../core/Services/language.service';
 
 @Component({
   selector: 'app-footer',
@@ -11,5 +10,5 @@ import { LanguageService } from '../../../core/Services/language.service';
   styleUrl: './footer.css',
 })
 export class Footer {
-  constructor(public langService: LanguageService) {}
+
 }
