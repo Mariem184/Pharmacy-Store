@@ -34,8 +34,8 @@
         >
           <div class="card-title-row">
             <h4>{{ store.name }}</h4>
-            <span class="status-badge" [class.open]="store.status !== 'Closed'">
-              {{ store.status }}
+            <span class="status-badge" [class.open]="isBranchOpen(store.hours)">
+              {{ getBranchStatusText(store.hours) }}
             </span>
           </div>
           <p class="address-text"><i class="fa-solid fa-location-dot"></i> {{ store.address }}</p>

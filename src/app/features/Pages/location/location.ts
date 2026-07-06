@@ -84,4 +84,56 @@ export class LocationComponent implements OnInit {
       store.address.toLowerCase().includes(this.searchQuery)
     );
   }
+
+  isBranchOpen(hours: string): boolean {
+    if (hours === '24 Hours') {
+      return true;
+    }
+
+    try {
+      const now = new Date();
+      const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+      const parts = hours.split('-');
+      if (parts.length !== 2) return false;
+
+      const parseTime = (timeStr: string): number => {
+        timeStr = timeStr.trim().toLowerCase();
+        const isPM = timeStr.includes('pm');
+        const isAM = timeStr.includes('am');
+        
+        let cleanTime = timeStr.replace('am', '').replace('pm', '').trim();
+        const timeParts = cleanTime.split(':');
+        let hours = parseInt(timeParts[0], 10);
+        const minutes = timeParts.length > 1 ? parseInt(timeParts[1], 10) : 0;
+
+        if (isPM && hours !== 12) {
+          hours += 12;
+        } else if (isAM && hours === 12) {
+          hours = 0;
+        }
+
+        return hours * 60 + minutes;
+      };
+
+      const startMinutes = parseTime(parts[0]);
+      const endMinutes = parseTime(parts[1]);
+
+      if (startMinutes <= endMinutes) {
+        return currentMinutes >= startMinutes && currentMinutes <= endMinutes;
+      } else {
+        return currentMinutes >= startMinutes || currentMinutes <= endMinutes;
+      }
+    } catch (e) {
+      console.error('Error parsing branch hours:', hours, e);
+      return true;
+    }
+  }
+
+  getBranchStatusText(hours: string): string {
+    if (hours === '24 Hours') {
+      return 'Open 24/7';
+    }
+    return this.isBranchOpen(hours) ? 'Open Now' : 'Closed';
+  }
 }
