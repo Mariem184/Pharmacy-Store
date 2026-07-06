@@ -5,6 +5,7 @@ import { AboutUs } from './features/Pages/about-us/about-us';
 import { AdminLayout } from './features/Layout/admin-layout/admin-layout';
 import { CustomerList } from './shared/Components/customer-list/customer-list';
 import { SettingsComponent } from './shared/Components/settings/settings';
+import { OrdersComponent } from './shared/Components/orders/orders';
 import { ContactMe } from './features/Pages/contact-me/contact-me';
 import { AuthLayout } from './features/Layout/auth-layout/auth-layout';
 import { Login } from './features/Auth/login/login';
@@ -61,7 +62,8 @@ export const routes: Routes = [
     component: AdminLayout,
     children:[
       { path: 'customers', component: CustomerList },
-      { path: 'settings', component: SettingsComponent }
+      { path: 'settings', component: SettingsComponent },
+      { path: 'orders', component: OrdersComponent }
     ]
   },
   { path: '', redirectTo: '/admin/settings', pathMatch: 'full'}

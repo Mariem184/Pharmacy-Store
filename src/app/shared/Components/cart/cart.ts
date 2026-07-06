@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CartService } from '../../../core/Services/cart.service';
+import { AuthService } from '../../../core/Services/auth';
+import { OrderService } from '../../../core/Services/order.service';
 
 @Component({
   selector: 'app-cart',
@@ -34,7 +36,11 @@ export class Cart implements OnInit {
   isOrderCompleted = false;
   generatedOrderId = '';
 
-  constructor(public cartService: CartService) {}
+  constructor(
+    public cartService: CartService,
+    private orderService: OrderService,
+    private authService: AuthService
+  ) {}
 
   ngOnInit(): void {}
 
@@ -92,6 +98,28 @@ export class Cart implements OnInit {
       this.isOrderCompleted = true;
       this.generatedOrderId = 'PH-' + Math.floor(100000 + Math.random() * 900000);
       
+      // Save Order to OrderService
+      const newOrder = {
+        orderId: this.generatedOrderId,
+        customerName: this.shippingName,
+        customerEmail: (this.authService.userData.value as any)?.email || 'guest@email.com',
+        date: new Date().toISOString().split('T')[0],
+        itemsCount: this.cartService.cartCount(),
+        items: this.cartService.cartItems().map(item => ({
+          id: item.id,
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+          image: item.image
+        })),
+        status: 'Pending' as const,
+        total: this.cartService.cartSubtotal() + 20, // Total + shipping fee EGP 20
+        paymentMethod: this.selectedPaymentMethod,
+        shippingAddress: `${this.shippingAddress}, ${this.shippingCity}`
+      };
+      
+      this.orderService.addOrder(newOrder);
+
       // Clear Cart items
       this.cartService.clearCart();
     }, 2000);
