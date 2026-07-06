@@ -1,4 +1,5 @@
 import { Injectable, signal } from '@angular/core';
+import { NotificationService } from './notification.service';
 
 export interface OrderItem {
   id: string | number;
@@ -118,7 +119,7 @@ export class OrderService {
     }
   ];
 
-  constructor() {
+  constructor(private notificationService: NotificationService) {
     this.loadOrders();
   }
 
@@ -147,6 +148,12 @@ export class OrderService {
     if (typeof window !== 'undefined') {
       localStorage.setItem('pharmacy_orders', JSON.stringify(updated));
     }
+    
+    // Trigger notification
+    this.notificationService.show(
+      `🎉 New Order Placed! ID: ${order.orderId} by ${order.customerName}`,
+      'success'
+    );
   }
 
   updateOrderStatus(orderId: string, status: Order['status']) {
