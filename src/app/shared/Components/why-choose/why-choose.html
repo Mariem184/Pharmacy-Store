@@ -1,39 +1,59 @@
 <section class="why-choose-section">
   <div class="container text-center">
-    <h2 class="section-title">Why choose MediStore?</h2>
-    <p class="section-subtitle">We combine online convenience with licensed pharmacy expertise.</p>
+    <h2 class="section-title">
+      {{ langService.currentLang() === 'en' ? 'Why choose MediStore?' : 'لماذا تختار MediStore؟' }}
+    </h2>
+    <p class="section-subtitle">
+      {{ langService.currentLang() === 'en' ? 'We combine online convenience with licensed pharmacy expertise.' : 'نجمع بين سهولة الطلب أونلاين وخبرة الصيدلية المعتمدة.' }}
+    </p>
     
     <div class="features-grid">
       <div class="feature-card">
         <div class="icon-wrapper">
           <i class="fa-regular fa-shield"></i>
         </div>
-        <h3>Licensed Pharmacists</h3>
-        <p>Every order reviewed by a registered pharmacist before dispatch.</p>
+        <h3>
+          {{ langService.currentLang() === 'en' ? 'Licensed Pharmacists' : 'صيادلة معتمدون' }}
+        </h3>
+        <p>
+          {{ langService.currentLang() === 'en' ? 'Every order reviewed by a registered pharmacist before dispatch.' : 'يتم مراجعة كل طلب من قِبل صيدلي مسجل قبل الشحن.' }}
+        </p>
       </div>
       
       <div class="feature-card">
         <div class="icon-wrapper">
           <i class="fa-solid fa-truck-fast"></i>
         </div>
-        <h3>Fast, Tracked Delivery</h3>
-        <p>Same-day dispatch for orders before 2pm. Free delivery over $35.</p>
+        <h3>
+          {{ langService.currentLang() === 'en' ? 'Fast, Tracked Delivery' : 'توصيل سريع ومتبع' }}
+        </h3>
+        <p>
+          {{ langService.currentLang() === 'en' ? 'Same-day dispatch for orders before 2pm. Free delivery over $35.' : 'شحن في نفس اليوم للطلبات قبل 2 مساءً. توصيل مجاني للطلبات فوق 35 جنيه.' }}
+        </p>
       </div>
       
       <div class="feature-card">
         <div class="icon-wrapper">
           <i class="fa-solid fa-heart-pulse"></i>
         </div>
-        <h3>Health Consultations</h3>
-        <p>Chat with our pharmacists online for medication guidance.</p>
+        <h3>
+          {{ langService.currentLang() === 'en' ? 'Health Consultations' : 'استشارات طبية' }}
+        </h3>
+        <p>
+          {{ langService.currentLang() === 'en' ? 'Chat with our pharmacists online for medication guidance.' : 'تحدث مع صيادلتنا مباشرة للحصول على توجيهات دوائية.' }}
+        </p>
       </div>
       
       <div class="feature-card">
         <div class="icon-wrapper">
           <i class="fa-regular fa-star"></i>
         </div>
-        <h3>Quality Guarantee</h3>
-        <p>Only genuine, manufacturer-sealed products. 100% authentic.</p>
+        <h3>
+          {{ langService.currentLang() === 'en' ? 'Quality Guarantee' : 'ضمان الجودة' }}
+        </h3>
+        <p>
+          {{ langService.currentLang() === 'en' ? 'Only genuine, manufacturer-sealed products. 100% authentic.' : 'منتجات أصلية فقط ومغلقة من الشركة المصنعة. مضمونة 100%.' }}
+        </p>
       </div>
     </div>
   </div>

@@ -169,3 +169,31 @@ span.text{
   }
 }
 
+/* RTL Mode Styles */
+body.rtl-mode .top-bar-left span {
+  margin-left: 15px;
+  margin-right: 0;
+}
+body.rtl-mode .top-bar-left i {
+  margin-left: 5px;
+  margin-right: 0;
+}
+body.rtl-mode .search-bar-container {
+  margin-left: auto;
+  margin-right: 20px;
+}
+@media (max-width: 768px) {
+  body.rtl-mode .search-bar-container {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+body.rtl-mode .search-input {
+  padding: 10px 15px 10px 40px;
+}
+body.rtl-mode .search-icon {
+  left: 15px;
+  right: auto;
+}
+
+

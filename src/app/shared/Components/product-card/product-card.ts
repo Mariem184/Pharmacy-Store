@@ -5,6 +5,7 @@ import { ProductService } from '../../../core/Services/product.services';
 import { Router, RouterLink } from '@angular/router';
 import { CartService } from '../../../core/Services/cart.service';
 import { AuthService } from '../../../core/Services/auth';
+import { LanguageService } from '../../../core/Services/language.service';
 
 @Component({
   selector: 'app-product-card',
@@ -38,6 +39,7 @@ export class ProductCard implements OnInit, OnDestroy {
     private cartService: CartService,
     private authService: AuthService,
     private router: Router,
+    public langService: LanguageService,
     private cdr: ChangeDetectorRef 
   ) {}
 

@@ -6,7 +6,7 @@
         <span class="logo-text">Medi<span class="text">Store</span></span>
       </div>
       <p class="brand-desc">
-        Your trusted online pharmacy. Licensed, regulated, and here for your health.
+        {{ langService.currentLang() === 'en' ? 'Your trusted online pharmacy. Licensed, regulated, and here for your health.' : 'صيدليتك الإلكترونية الموثوقة. مرخصة، خاضعة للرقابة، وموجودة دائماً من أجل صحتك.' }}
       </p>
       <div class="phone-number">
         <i class="fas fa-phone"></i> 1-800-PHARMA-1
@@ -14,37 +14,37 @@
     </div>
 
     <div class="footer-column">
-      <h3>Shop</h3>
+      <h3>{{ langService.currentLang() === 'en' ? 'Shop' : 'تسوق' }}</h3>
       <ul>
-        <li><a href="#">Anti-Biotics</a></li>
-        <li><a href="#">Tablets & Capsules</a></li>
-        <li><a href="#">Creams & Ointment</a></li>
-        <li><a href="#">Suppsitories</a></li>
-        <li><a href="#">Eye Care</a></li>
-        <li><a href="#">First Aid</a></li>
-        <li><a href="#">Injections</a></li>
+        <li><a href="#">{{ langService.currentLang() === 'en' ? 'Anti-Biotics' : 'مضادات حيوية' }}</a></li>
+        <li><a href="#">{{ langService.currentLang() === 'en' ? 'Tablets & Capsules' : 'أقراص وكبسولات' }}</a></li>
+        <li><a href="#">{{ langService.currentLang() === 'en' ? 'Creams & Ointment' : 'كريمات ومراهم' }}</a></li>
+        <li><a href="#">{{ langService.currentLang() === 'en' ? 'Suppsitories' : 'لبوس ومستحضرات شرجية' }}</a></li>
+        <li><a href="#">{{ langService.currentLang() === 'en' ? 'Eye Care' : 'قطرات ومستحضرات العين' }}</a></li>
+        <li><a href="#">{{ langService.currentLang() === 'en' ? 'First Aid' : 'إسعافات أولية ومطهرات' }}</a></li>
+        <li><a href="#">{{ langService.currentLang() === 'en' ? 'Injections' : 'حقن وأمبولات' }}</a></li>
       </ul>
     </div>
 
     <div class="footer-column">
-      <h3>Help</h3>
+      <h3>{{ langService.currentLang() === 'en' ? 'Help' : 'المساعدة' }}</h3>
       <ul>
-        <li><a href="#">Track Your Order</a></li>
-        <li><a href="#">Returns & Refunds</a></li>
-        <li><a href="#">Prescription Service</a></li>
-        <li><a href="#">Health Advice</a></li>
-        <li><a routerLink="/contact-me">Contact me</a></li>
+        <li><a href="#">{{ langService.currentLang() === 'en' ? 'Track Your Order' : 'تتبع طلبك' }}</a></li>
+        <li><a href="#">{{ langService.currentLang() === 'en' ? 'Returns & Refunds' : 'المرتجعات والاسترداد' }}</a></li>
+        <li><a href="#">{{ langService.currentLang() === 'en' ? 'Prescription Service' : 'خدمة الروشتة' }}</a></li>
+        <li><a href="#">{{ langService.currentLang() === 'en' ? 'Health Advice' : 'نصائح صحية' }}</a></li>
+        <li><a routerLink="/contact-me">{{ langService.currentLang() === 'en' ? 'Contact me' : 'تواصل معي' }}</a></li>
       </ul>
     </div>
 
     <div class="footer-column">
-      <h3>Company</h3>
+      <h3>{{ langService.currentLang() === 'en' ? 'Company' : 'الشركة' }}</h3>
       <ul>
-        <li><a href="#">About MediStore</a></li>
-        <li><a href="#">Pharmacist Team</a></li>
-        <li><a href="#">Careers</a></li>
-        <li><a href="#">Press</a></li>
-        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">{{ langService.currentLang() === 'en' ? 'About MediStore' : 'عن MediStore' }}</a></li>
+        <li><a href="#">{{ langService.currentLang() === 'en' ? 'Pharmacist Team' : 'فريق الصيادلة' }}</a></li>
+        <li><a href="#">{{ langService.currentLang() === 'en' ? 'Careers' : 'الوظائف' }}</a></li>
+        <li><a href="#">{{ langService.currentLang() === 'en' ? 'Press' : 'الصحافة' }}</a></li>
+        <li><a href="#">{{ langService.currentLang() === 'en' ? 'Privacy Policy' : 'سياسة الخصوصية' }}</a></li>
       </ul>
     </div>
 
@@ -54,11 +54,11 @@
 
   <div class="footer-bottom">
     <div class="copyright">
-      © 2026 MediStore Pharmacy. All rights reserved.
+      {{ langService.currentLang() === 'en' ? '© 2026 MediStore Pharmacy. All rights reserved.' : '© 2026 صيدلية MediStore. كل الحقوق محفوظة.' }}
     </div>
     <div class="regulation">
       <i class="shield-icon fas fa-shield-alt"></i> 
-      Regulated by the Pharmacy Board · GPhC registered
+      {{ langService.currentLang() === 'en' ? 'Regulated by the Pharmacy Board · GPhC registered' : 'خاضعة لرقابة نقابة الصيادلة · مسجلة في GPhC' }}
     </div>
   </div>
 </footer>

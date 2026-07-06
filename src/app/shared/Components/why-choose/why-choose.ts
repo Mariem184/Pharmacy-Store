@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { LanguageService } from '../../../core/Services/language.service';
 
 @Component({
   selector: 'app-why-choose',
@@ -8,4 +9,6 @@ import { CommonModule } from '@angular/common';
   templateUrl: './why-choose.html',
   styleUrl: './why-choose.css',
 })
-export class WhyChoose {}
+export class WhyChoose {
+  constructor(public langService: LanguageService) {}
+}

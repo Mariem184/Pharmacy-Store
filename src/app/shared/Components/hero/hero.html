@@ -1,13 +1,20 @@
 <section class="hero-banner">
   <div class="hero-content">
-    <span class="hero-subtitle">YOUR HEALTH, OUR PRIORITY</span>
-    <h1 class="hero-title">Trusted Pharmacy, <br> Delivered to You</h1>
+    <span class="hero-subtitle">
+      {{ langService.currentLang() === 'en' ? 'YOUR HEALTH, OUR PRIORITY' : 'صحتك هي أولويتنا' }}
+    </span>
+    <h1 class="hero-title" [innerHTML]="langService.currentLang() === 'en' ? 'Trusted Pharmacy, <br> Delivered to You' : 'صيدليتك الموثوقة، <br> تصلك أينما كنت'"></h1>
     <p class="hero-description">
-      Over 2,000 prescription and over-the-counter products from brands your pharmacist recommends.
+      {{ langService.currentLang() === 'en' ? 'Over 2,000 prescription and over-the-counter products from brands your pharmacist recommends.' : 'أكثر من 2000 منتج طبي ومستحضرات تجميل من الماركات التي ينصح بها الصيادلة.' }}
     </p>
     <div class="hero-buttons">
-      <button class="btn-white" (click)="scrollToProducts()">Shop Vitamins</button>
-      <button class="btn-outline"><i class="fas fa-map-marker-alt"></i> Find a Store</button>
+      <button class="btn-white" (click)="scrollToProducts()">
+        {{ langService.currentLang() === 'en' ? 'Shop Vitamins' : 'تسوق الفيتامينات' }}
+      </button>
+      <button class="btn-outline">
+        <i class="fas fa-map-marker-alt"></i> 
+        {{ langService.currentLang() === 'en' ? 'Find a Store' : 'ابحث عن فرع' }}
+      </button>
     </div>
   </div>
 

@@ -5,6 +5,8 @@ import { RouterLink } from '@angular/router';
 import { ProductService } from '../../../core/Services/product.services';
 import { AuthService } from '../../../core/Services/auth';
 import { CartService } from '../../../core/Services/cart.service';
+import { LanguageService } from '../../../core/Services/language.service';
+
 @Component({
   selector: 'app-navbar',
   standalone: true,
@@ -23,6 +25,7 @@ export class Navbar implements OnInit {
     private productService: ProductService, 
     private _AuthService: AuthService,
     public cartService: CartService,
+    public langService: LanguageService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -60,5 +63,10 @@ export class Navbar implements OnInit {
 
   toggleCart() {
     this.cartService.toggleDrawer();
+  }
+
+  toggleLanguage() {
+    const nextLang = this.langService.currentLang() === 'en' ? 'ar' : 'en';
+    this.langService.setLanguage(nextLang);
   }
 }
