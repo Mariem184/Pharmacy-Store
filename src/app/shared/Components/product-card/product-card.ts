@@ -2,8 +2,9 @@ import { Component, OnInit, ChangeDetectorRef, Input, OnDestroy, signal } from '
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { ProductService } from '../../../core/Services/product.services';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { CartService } from '../../../core/Services/cart.service';
+import { AuthService } from '../../../core/Services/auth';
 
 @Component({
   selector: 'app-product-card',
@@ -35,6 +36,8 @@ export class ProductCard implements OnInit, OnDestroy {
     private http: HttpClient, 
     private productService: ProductService,
     private cartService: CartService,
+    private authService: AuthService,
+    private router: Router,
     private cdr: ChangeDetectorRef 
   ) {}
 
@@ -138,6 +141,10 @@ export class ProductCard implements OnInit, OnDestroy {
   }
 
   addToCart(product: any) {
+    if (!this.authService.userData.value) {
+      this.router.navigate(['/login']);
+      return;
+    }
     this.cartService.addToCart(product);
   }
 }

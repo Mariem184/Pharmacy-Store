@@ -1,11 +1,12 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ProductService } from '../../../core/Services/product.services';
 import { CustomerService } from '../../../services/customer';
 import { CartService } from '../../../core/Services/cart.service';
 import { Navbar } from '../../../shared/Components/navbar/navbar';
 import { Cart } from '../../../shared/Components/cart/cart';
+import { AuthService } from '../../../core/Services/auth';
 
  
 @Component({
@@ -33,6 +34,8 @@ export class ProductDetails implements OnInit {
     private productService: ProductService,
     private customerService: CustomerService,
     private cartService: CartService,
+    private authService: AuthService,
+    private router: Router,
     private cdr: ChangeDetectorRef
   ) {}
  
@@ -124,6 +127,10 @@ export class ProductDetails implements OnInit {
   increaseQty()          { if (this.quantity < this.productStock) this.quantity++; }
   setTab(tab: string)    { this.activeTab = tab; }
   addToCart() {
+    if (!this.authService.userData.value) {
+      this.router.navigate(['/login']);
+      return;
+    }
     if (this.product) {
       this.cartService.addToCart(this.product, this.quantity);
     }
