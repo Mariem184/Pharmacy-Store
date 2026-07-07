@@ -1,6 +1,6 @@
 <div class="top-bar">
   <div class="top-bar-left">
-    <span><i class="fas fa-phone"></i> 1-800-PHARMA</span>
+    <span><i class="fas fa-phone"></i> {{ settingsService.getPhone() }}</span>
     <span routerLink="/location" style="cursor: pointer;"><i class="fas fa-map-marker-alt"></i> Find a store</span>
   </div>
 
@@ -14,7 +14,7 @@
 
   <div class="logo">
     <div class="logo-text">
-      Medi<span class="text">Store</span>
+      {{ settingsService.getStoreName() }}
       <small>PHARMACY</small>
     </div>
   </div>

@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { CartService } from '../../../core/Services/cart.service';
 import { AuthService } from '../../../core/Services/auth';
 import { OrderService } from '../../../core/Services/order.service';
+import { SettingsService } from '../../../services/settings';
 
 @Component({
   selector: 'app-cart',
@@ -40,7 +41,8 @@ export class Cart implements OnInit {
   constructor(
     public cartService: CartService,
     private orderService: OrderService,
-    private authService: AuthService
+    private authService: AuthService,
+    public settingsService: SettingsService
   ) {}
 
   ngOnInit(): void {}

@@ -171,7 +171,7 @@
         Free delivery applied
       </span>
       <span class="delivery-text" *ngIf="!cartService.isFreeDeliveryApplied()">
-        Add EGP {{ 500 - cartService.cartSubtotal() | number:'1.2-2' }} more for free delivery
+        Add EGP {{ settingsService.getDeliveryThreshold() - cartService.cartSubtotal() | number:'1.2-2' }} more for free delivery
       </span>
     </div>
 

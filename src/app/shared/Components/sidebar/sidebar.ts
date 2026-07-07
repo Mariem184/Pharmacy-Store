@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectorRef, Input, Output, EventEmitter } fro
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common'; 
 import { AuthService } from '../../../core/Services/auth';
+import { SettingsService } from '../../../services/settings';
 
 @Component({
   selector: 'app-sidebar',
@@ -24,6 +25,7 @@ export class Sidebar implements OnInit {
   constructor(
     private router: Router,
     private _AuthService: AuthService,
+    public settingsService: SettingsService,
     private cdr: ChangeDetectorRef
   ) { }
 

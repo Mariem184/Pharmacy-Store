@@ -3,7 +3,7 @@
         <button class="menu-toggle-btn" (click)="toggleSidebar()" title="Toggle Menu">
             <i class="fa-solid fa-bars"></i>
         </button>
-        <span class="brand-name">MediStore </span>
+        <span class="brand-name">{{ settingsService.getStoreName() }} </span>
         <span class="separator">&gt;</span>
         <span class="page-name"> Admin</span>
     </div>

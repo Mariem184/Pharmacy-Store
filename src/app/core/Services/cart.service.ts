@@ -1,4 +1,5 @@
 import { Injectable, signal, computed } from '@angular/core';
+import { SettingsService } from '../../services/settings';
 
 export interface CartItem {
   id: string;
@@ -28,10 +29,10 @@ export class CartService {
   });
 
   isFreeDeliveryApplied = computed(() => {
-    return this.cartSubtotal() >= 500;
+    return this.cartSubtotal() >= this.settingsService.getDeliveryThreshold();
   });
 
-  constructor() {
+  constructor(private settingsService: SettingsService) {
     // Load initial cart from localStorage in browser context
     if (typeof window !== 'undefined') {
       const savedCart = localStorage.getItem('cart');

@@ -5,6 +5,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Cart } from "../../../shared/Components/cart/cart";
 
+import { SettingsService } from '../../../services/settings';
+
 @Component({
   selector: 'app-contact-me',
   imports: [Navbar, Footer,CommonModule,FormsModule, Cart],
@@ -19,9 +21,11 @@ export class ContactMe {
     message: ''
   };
 
+  constructor(public settingsService: SettingsService) {}
+
   onSubmit() {
     console.log('Contact Form Submitted:', this.formData);
-    alert('Thank you for contacting MediStore! We will get back to you soon.');
+    alert('Thank you for contacting ' + this.settingsService.getStoreName() + '! We will get back to you soon.');
     this.formData = { name: '', email: '', subject: '', message: '' };
   }
 }

@@ -5,6 +5,7 @@ import { RouterLink } from '@angular/router';
 import { ProductService } from '../../../core/Services/product.services';
 import { AuthService } from '../../../core/Services/auth';
 import { CartService } from '../../../core/Services/cart.service';
+import { SettingsService } from '../../../services/settings';
 @Component({
   selector: 'app-navbar',
   standalone: true,
@@ -23,6 +24,7 @@ export class Navbar implements OnInit {
     private productService: ProductService, 
     private _AuthService: AuthService,
     public cartService: CartService,
+    public settingsService: SettingsService,
     private cdr: ChangeDetectorRef
   ) {}
 

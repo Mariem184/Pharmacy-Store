@@ -1,7 +1,7 @@
 <div class="sidebar-overlay" *ngIf="isOpen" (click)="onClose()"></div>
 <nav class="sidebar" [class.mobile-open]="isOpen">
     <div class="sidebar-header">
-        <h2>Medi<span>Store</span></h2>
+        <h2>{{ settingsService.getStoreName() }}</h2>
         <button class="sidebar-close-btn" (click)="onClose()" title="Close Menu">
             <i class="fa-solid fa-xmark"></i>
         </button>

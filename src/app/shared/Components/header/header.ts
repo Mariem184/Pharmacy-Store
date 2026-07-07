@@ -26,7 +26,7 @@ export class Header implements OnInit {
   dismissedNotificationIds = signal<string[]>([]);
 
   constructor(
-    private settingsService: SettingsService,
+    public settingsService: SettingsService,
     private authService: AuthService,
     private cdr: ChangeDetectorRef,
     private orderService: OrderService

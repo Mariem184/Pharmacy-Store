@@ -3,13 +3,13 @@
     
     <div class="footer-column brand-column">
       <div class="logo">
-        <span class="logo-text">Medi<span class="text">Store</span></span>
+        <span class="logo-text">{{ settingsService.getStoreName() }}</span>
       </div>
       <p class="brand-desc">
         Your trusted online pharmacy. Licensed, regulated, and here for your health.
       </p>
       <div class="phone-number">
-        <i class="fas fa-phone"></i> 1-800-PHARMA-1
+        <i class="fas fa-phone"></i> {{ settingsService.getPhone() }}
       </div>
     </div>
 
@@ -40,7 +40,7 @@
     <div class="footer-column">
       <h3>Company</h3>
       <ul>
-        <li><a href="#">About MediStore</a></li>
+        <li><a href="#">About {{ settingsService.getStoreName() }}</a></li>
         <li><a href="#">Pharmacist Team</a></li>
         <li><a href="#">Careers</a></li>
         <li><a href="#">Press</a></li>
@@ -54,7 +54,7 @@
 
   <div class="footer-bottom">
     <div class="copyright">
-      © 2026 MediStore Pharmacy. All rights reserved.
+      © 2026 {{ settingsService.getStoreName() }} Pharmacy. All rights reserved.
     </div>
     <div class="regulation">
       <i class="shield-icon fas fa-shield-alt"></i> 
