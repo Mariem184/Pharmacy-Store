@@ -7,6 +7,7 @@ import { CustomerList } from './shared/Components/customer-list/customer-list';
 import { SettingsComponent } from './shared/Components/settings/settings';
 import { OrdersComponent } from './shared/Components/orders/orders';
 import { ContactMe } from './features/Pages/contact-me/contact-me';
+import { DashboardComponent } from './shared/Components/dashboard/dashboard';
 import { AuthLayout } from './features/Layout/auth-layout/auth-layout';
 import { Login } from './features/Auth/login/login';
 import { Register } from './features/Auth/register/register';
@@ -61,10 +62,11 @@ export const routes: Routes = [
     path: 'admin',
     component: AdminLayout,
     children:[
+      { path: 'dashboard', component: DashboardComponent },
       { path: 'customers', component: CustomerList },
       { path: 'settings', component: SettingsComponent },
       { path: 'orders', component: OrdersComponent }
     ]
   },
-  { path: '', redirectTo: '/admin/settings', pathMatch: 'full'}
+  { path: '', redirectTo: '/admin/dashboard', pathMatch: 'full'}
 ];
