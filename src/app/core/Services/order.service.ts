@@ -1,5 +1,4 @@
 import { Injectable, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { NotificationService } from './notification.service';
 import { SettingsService } from '../../services/settings';
 import { AuthService } from './auth';
@@ -42,11 +41,11 @@ export class OrderService {
       itemsCount: 3,
       status: 'Delivered',
       total: 67.47,
-      paymentMethod: 'card',
-      shippingAddress: '12 El-Galaa St, Cairo',
+      paymentMethod: 'cod',
+      shippingAddress: '12 El-Galaa St, Heliopolis, Cairo',
       items: [
-        { id: 1, name: 'Augmentin 1 g', price: 210, quantity: 1 },
-        { id: 2, name: 'Xithrone 500 mg', price: 86, quantity: 2 }
+        { id: 1, name: 'Panadol Extra Tablets', price: 15.00, quantity: 2 },
+        { id: 2, name: 'Vitamin D3 1000 IU', price: 37.47, quantity: 1 }
       ]
     },
     {
@@ -122,10 +121,7 @@ export class OrderService {
     }
   ];
 
-  private cloudUrl = 'https://api.restful-api.dev/objects/ff8081819d82fab6019f3a78543d2679';
-
   constructor(
-    private http: HttpClient,
     private notificationService: NotificationService,
     private settingsService: SettingsService,
     private authService: AuthService
@@ -140,90 +136,25 @@ export class OrderService {
       if (stored) {
         try {
           this.orders.set(JSON.parse(stored));
+          return;
         } catch (e) {
-          console.error(e);
+          console.error('Error parsing stored orders, resetting to default', e);
         }
-      } else {
-        this.orders.set(this.mockOrders);
-        localStorage.setItem('pharmacy_orders', JSON.stringify(this.mockOrders));
       }
+      this.orders.set(this.mockOrders);
+      localStorage.setItem('pharmacy_orders', JSON.stringify(this.mockOrders));
     } else {
       this.orders.set(this.mockOrders);
     }
-
-    this.http.get<any>(this.cloudUrl).subscribe({
-      next: (res) => {
-        if (res && res.data && Array.isArray(res.data.orders)) {
-          const cloudOrders: Order[] = res.data.orders;
-          
-          if (cloudOrders.length > 0) {
-            const localOrders = this.orders();
-            const merged = [...cloudOrders];
-            localOrders.forEach(lo => {
-              const exists = merged.some(co => co.orderId === lo.orderId);
-              if (!exists) {
-                merged.push(lo);
-              }
-            });
-
-            this.orders.set(merged);
-            if (typeof window !== 'undefined') {
-              localStorage.setItem('pharmacy_orders', JSON.stringify(merged));
-            }
-          } else {
-            this.syncToCloudDirect(this.orders());
-          }
-        }
-      },
-      error: (err) => console.log('Could not fetch cloud orders, using local storage.', err)
-    });
-  }
-
-  private syncToCloud(ordersList: Order[]) {
-    this.http.put(this.cloudUrl, {
-      name: 'Pharmacy_Orders_Mariem_Store',
-      data: { orders: ordersList }
-    }).subscribe({
-      next: () => console.log('Orders synced to cloud successfully.'),
-      error: (err) => console.error('Cloud orders sync failed', err)
-    });
   }
 
   addOrder(order: Order) {
-    const localUpdated = [order, ...this.orders()];
-    this.orders.set(localUpdated);
+    const updated = [order, ...this.orders()];
+    this.orders.set(updated);
     if (typeof window !== 'undefined') {
-      localStorage.setItem('pharmacy_orders', JSON.stringify(localUpdated));
+      localStorage.setItem('pharmacy_orders', JSON.stringify(updated));
     }
-
-    this.http.get<any>(this.cloudUrl).subscribe({
-      next: (res) => {
-        let cloudOrders: Order[] = [];
-        if (res && res.data && Array.isArray(res.data.orders)) {
-          cloudOrders = res.data.orders;
-        }
-
-        const merged = [order, ...cloudOrders];
-        this.orders().forEach(lo => {
-          const exists = merged.some(co => co.orderId === lo.orderId);
-          if (!exists) {
-            merged.push(lo);
-          }
-        });
-
-        this.orders.set(merged);
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('pharmacy_orders', JSON.stringify(merged));
-        }
-
-        this.syncToCloudDirect(merged);
-      },
-      error: (err) => {
-        console.error('Failed to get cloud orders for saving, syncing locally only', err);
-        this.syncToCloudDirect(localUpdated);
-      }
-    });
-
+    
     if (this.settingsService.getNewOrderAlerts() && this.authService.isAdmin()) {
       this.notificationService.show(
         `🎉 New Order Placed! ID: ${order.orderId} by ${order.customerName}`,
@@ -232,48 +163,12 @@ export class OrderService {
     }
   }
 
-  private syncToCloudDirect(ordersList: Order[]) {
-    this.http.put(this.cloudUrl, {
-      name: 'Pharmacy_Orders_Mariem_Store',
-      data: { orders: ordersList }
-    }).subscribe({
-      next: () => console.log('Orders synced to cloud successfully.'),
-      error: (err) => console.error('Cloud orders sync failed', err)
-    });
-  }
-
   updateOrderStatus(orderId: string, status: Order['status']) {
     const updated = this.orders().map(o => o.orderId === orderId ? { ...o, status } : o);
     this.orders.set(updated);
     if (typeof window !== 'undefined') {
       localStorage.setItem('pharmacy_orders', JSON.stringify(updated));
     }
-    
-    this.http.get<any>(this.cloudUrl).subscribe({
-      next: (res) => {
-        let cloudOrders: Order[] = [];
-        if (res && res.data && Array.isArray(res.data.orders)) {
-          cloudOrders = res.data.orders;
-        }
-
-        const merged = cloudOrders.map(o => o.orderId === orderId ? { ...o, status } : o);
-        updated.forEach(lo => {
-          const exists = merged.some(co => co.orderId === lo.orderId);
-          if (!exists) {
-            merged.push(lo);
-          }
-        });
-
-        this.orders.set(merged);
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('pharmacy_orders', JSON.stringify(merged));
-        }
-        this.syncToCloudDirect(merged);
-      },
-      error: (err) => {
-        this.syncToCloudDirect(updated);
-      }
-    });
   }
 
   updateOrderReview(orderId: string, rating: number, comment: string) {
@@ -282,32 +177,6 @@ export class OrderService {
     if (typeof window !== 'undefined') {
       localStorage.setItem('pharmacy_orders', JSON.stringify(updated));
     }
-    
-    this.http.get<any>(this.cloudUrl).subscribe({
-      next: (res) => {
-        let cloudOrders: Order[] = [];
-        if (res && res.data && Array.isArray(res.data.orders)) {
-          cloudOrders = res.data.orders;
-        }
-
-        const merged = cloudOrders.map(o => o.orderId === orderId ? { ...o, rating, reviewComment: comment } : o);
-        updated.forEach(lo => {
-          const exists = merged.some(co => co.orderId === lo.orderId);
-          if (!exists) {
-            merged.push(lo);
-          }
-        });
-
-        this.orders.set(merged);
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('pharmacy_orders', JSON.stringify(merged));
-        }
-        this.syncToCloudDirect(merged);
-      },
-      error: (err) => {
-        this.syncToCloudDirect(updated);
-      }
-    });
   }
 
   private setupStorageSync() {

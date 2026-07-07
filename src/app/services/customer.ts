@@ -1,7 +1,5 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -9,20 +7,11 @@ import { map, catchError } from 'rxjs/operators';
 export class CustomerService {
   private apiUrl = 'https://ecommerce.routemisr.com/api/v1/users';
 
-  constructor(private http: HttpClient){}
+  constructor(){}
 
   getAllCustomers(): Observable<any>{
-    return this.http.get<any>(this.apiUrl).pipe(
-      map(res => {
-        const apiUsers = res.users || [];
-        const merged = this.mergeLocalCustomers(apiUsers);
-        return { users: merged };
-      }),
-      catchError(err => {
-        const merged = this.mergeLocalCustomers([]);
-        return of({ users: merged });
-      })
-    );
+    const merged = this.mergeLocalCustomers([]);
+    return of({ users: merged });
   }
 
   private mergeLocalCustomers(apiUsers: any[]): any[] {
