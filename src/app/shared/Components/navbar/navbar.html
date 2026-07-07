@@ -55,10 +55,6 @@
 
     @if (isLoggesIn) {
 
-      <button class="notification-btn">
-        <i class="fa-solid fa-bell"></i>
-      </button>
-
       @if (!isAdmin) {
         <button (click)="toggleCart()" class="cart-btn" style="position: relative;">
           <i class="fas fa-shopping-cart"></i>

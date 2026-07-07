@@ -2,6 +2,7 @@ import { Component, ChangeDetectorRef } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../../core/Services/auth';
 import { Router, RouterLink } from '@angular/router';
+import { CustomerService } from '../../../services/customer';
 
 @Component({
   selector: 'app-register',
@@ -17,6 +18,7 @@ export class Register {
   constructor(
     private _AuthService: AuthService, 
     private _Router: Router,
+    private _customerService: CustomerService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -49,6 +51,11 @@ export class Register {
           this.isLoading = false;
           console.log(res);
           if (res.message == 'success') {
+            this._customerService.saveLocalUser({
+              name: this.regForm.value.name,
+              email: this.regForm.value.email,
+              phone: this.regForm.value.phone
+            });
             this._Router.navigate(['/auth/login']);
           }
           this.cdr.detectChanges();
