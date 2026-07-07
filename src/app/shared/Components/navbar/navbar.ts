@@ -16,9 +16,14 @@ import { SettingsService } from '../../../services/settings';
 export class Navbar implements OnInit {
   isLoggesIn: boolean = false;
   isAdmin: boolean = false;
+  isMenuOpen: boolean = false;
   private isInitialized = false;
 
   searchQuery: string = '';
+
+  toggleMenu() {
+    this.isMenuOpen = !this.isMenuOpen;
+  }
 
   constructor(
     private productService: ProductService, 

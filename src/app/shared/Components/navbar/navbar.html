@@ -12,70 +12,74 @@
 
 <header class="main-header">
 
-  <div class="logo">
-    <div class="logo-text">
-      <span style="color: #0b593e; font-weight: 800;">Medi</span><span style="color: #1f2937; font-weight: 800;">Store</span>
-      <small>PHARMACY</small>
+  <div class="logo-and-toggle">
+    <div class="logo">
+      <div class="logo-text">
+        <span style="color: #0b593e; font-weight: 800;">Medi</span><span style="color: #1f2937; font-weight: 800;">Store</span>
+        <small>PHARMACY</small>
+      </div>
     </div>
+    <button class="hamburger-menu" (click)="toggleMenu()" title="Toggle Menu">
+      <i class="fa-solid" [class.fa-bars]="!isMenuOpen" [class.fa-xmark]="isMenuOpen"></i>
+    </button>
   </div>
 
-  @if (isLoggesIn) {
-    <div class="search-bar-container">
-      <input
-        type="text"
-        placeholder="Search medicines, vitamins, brands..."
-        class="search-input"
-        [(ngModel)]="searchQuery"
-        (keyup.enter)="onSearch()"
-      >
-
-      <i class="fas fa-search search-icon" (click)="onSearch()"></i>
-    </div>
-  }
-
-  <div class="header-actions">
-
-    <button class="action-btn" routerLink="/home">Home</button>
-
-    @if (isLoggesIn && isAdmin) {
-      <button class="action-btn" routerLink="/admin/settings">Dashboard</button>
+  <div class="nav-content" [class.open]="isMenuOpen">
+    @if (isLoggesIn) {
+      <div class="search-bar-container">
+        <input
+          type="text"
+          placeholder="Search medicines, vitamins, brands..."
+          class="search-input"
+          [(ngModel)]="searchQuery"
+          (keyup.enter)="onSearch()"
+        >
+        <i class="fas fa-search search-icon" (click)="onSearch()"></i>
+      </div>
     }
 
-    <button class="action-btn" routerLink="/location">
-      Location
-    </button>
+    <div class="header-actions">
+      <button class="action-btn" routerLink="/home" (click)="isMenuOpen = false">Home</button>
 
-    <button class="action-btn" routerLink="/about-us">
-      About Us
-    </button>
-
-    <button class="action-btn" routerLink="/contact-me">
-      Contact Me
-    </button>
-
-    @if (isLoggesIn) {
-
-      @if (!isAdmin) {
-        <button (click)="toggleCart()" class="cart-btn" style="position: relative;">
-          <i class="fas fa-shopping-cart"></i>
-          <span *ngIf="cartService.cartCount() > 0" style="position: absolute; top: -5px; right: -5px; background-color: #ef4444; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7rem; font-weight: bold; min-width: 18px; text-align: center;">
-            {{ cartService.cartCount() }}
-          </span>
-        </button>
+      @if (isLoggesIn && isAdmin) {
+        <button class="action-btn" routerLink="/admin/dashboard" (click)="isMenuOpen = false">Dashboard</button>
       }
 
-      <button class="logout-btn" (click)="logout()">
-        <i class="fa-solid fa-right-from-bracket"></i>
+      <button class="action-btn" routerLink="/location" (click)="isMenuOpen = false">
+        Location
       </button>
 
-    } @else {
-
-      <button class="admin-btn" routerLink="/auth/login">
-        <i class="fa-solid fa-user"></i>
+      <button class="action-btn" routerLink="/about-us" (click)="isMenuOpen = false">
+        About Us
       </button>
 
-    }
+      <button class="action-btn" routerLink="/contact-me" (click)="isMenuOpen = false">
+        Contact Me
+      </button>
 
+      <div class="actions-divider"></div>
+
+      <div class="interactive-actions">
+        @if (isLoggesIn) {
+          @if (!isAdmin) {
+            <button (click)="toggleCart(); isMenuOpen = false" class="cart-btn" style="position: relative;">
+              <i class="fas fa-shopping-cart"></i>
+              <span *ngIf="cartService.cartCount() > 0" style="position: absolute; top: -5px; right: -5px; background-color: #ef4444; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7rem; font-weight: bold; min-width: 18px; text-align: center;">
+                {{ cartService.cartCount() }}
+              </span>
+            </button>
+          }
+
+          <button class="logout-btn" (click)="logout(); isMenuOpen = false">
+            <i class="fa-solid fa-right-from-bracket"></i>
+          </button>
+        } @else {
+          <button class="admin-btn" routerLink="/auth/login" (click)="isMenuOpen = false">
+            <i class="fa-solid fa-user"></i>
+          </button>
+        }
+      </div>
+    </div>
   </div>
 
 </header>
