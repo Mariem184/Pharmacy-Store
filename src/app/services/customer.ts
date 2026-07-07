@@ -109,20 +109,54 @@ export class CustomerService {
         console.error(e);
       }
     }
+    
+    const newUser = {
+      _id: 'reg-' + Math.random().toString(36).substr(2, 9),
+      name: user.name,
+      email: user.email,
+      phone: user.phone || '',
+      createdAt: new Date().toISOString()
+    };
+
     const exists = users.some(u => u.email && u.email.toLowerCase() === user.email.toLowerCase());
     if (!exists) {
-      const newUser = {
-        _id: 'reg-' + Math.random().toString(36).substr(2, 9),
-        name: user.name,
-        email: user.email,
-        phone: user.phone || '',
-        createdAt: new Date().toISOString()
-      };
       users.push(newUser);
       localStorage.setItem('local_registered_users', JSON.stringify(users));
-      
-      const merged = this.mergeLocalCustomers(users);
-      this.syncToCloud(merged);
     }
+
+    // Always fetch cloud data first, merge locally, and put back to prevent overwriting cloud state!
+    this.http.get<any>(this.cloudUrl).subscribe({
+      next: (res) => {
+        let cloudUsers: any[] = [];
+        if (res && res.data && Array.isArray(res.data.users)) {
+          cloudUsers = res.data.users;
+        }
+
+        const merged = [...cloudUsers];
+        
+        // Add new user if not in cloud
+        const existsInCloud = merged.some(cu => cu.email && cu.email.toLowerCase() === newUser.email.toLowerCase());
+        if (!existsInCloud) {
+          merged.push(newUser);
+        }
+
+        // Add any other local users
+        users.forEach(lu => {
+          const existsAlready = merged.some(cu => cu.email && cu.email.toLowerCase() === lu.email.toLowerCase());
+          if (!existsAlready) {
+            merged.push(lu);
+          }
+        });
+
+        // Merge with orders and sync
+        const finalMerged = this.mergeLocalCustomers(merged);
+        this.syncToCloud(finalMerged);
+      },
+      error: (err) => {
+        console.error('Failed to get cloud users for saving, syncing locally only', err);
+        const finalMerged = this.mergeLocalCustomers(users);
+        this.syncToCloud(finalMerged);
+      }
+    });
   }
 }

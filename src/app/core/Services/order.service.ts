@@ -171,7 +171,7 @@ export class OrderService {
               localStorage.setItem('pharmacy_orders', JSON.stringify(merged));
             }
           } else {
-            this.syncToCloud(this.orders());
+            this.syncToCloudDirect(this.orders());
           }
         }
       },
@@ -190,13 +190,39 @@ export class OrderService {
   }
 
   addOrder(order: Order) {
-    const updated = [order, ...this.orders()];
-    this.orders.set(updated);
+    const localUpdated = [order, ...this.orders()];
+    this.orders.set(localUpdated);
     if (typeof window !== 'undefined') {
-      localStorage.setItem('pharmacy_orders', JSON.stringify(updated));
+      localStorage.setItem('pharmacy_orders', JSON.stringify(localUpdated));
     }
-    
-    this.syncToCloud(updated);
+
+    this.http.get<any>(this.cloudUrl).subscribe({
+      next: (res) => {
+        let cloudOrders: Order[] = [];
+        if (res && res.data && Array.isArray(res.data.orders)) {
+          cloudOrders = res.data.orders;
+        }
+
+        const merged = [order, ...cloudOrders];
+        this.orders().forEach(lo => {
+          const exists = merged.some(co => co.orderId === lo.orderId);
+          if (!exists) {
+            merged.push(lo);
+          }
+        });
+
+        this.orders.set(merged);
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('pharmacy_orders', JSON.stringify(merged));
+        }
+
+        this.syncToCloudDirect(merged);
+      },
+      error: (err) => {
+        console.error('Failed to get cloud orders for saving, syncing locally only', err);
+        this.syncToCloudDirect(localUpdated);
+      }
+    });
 
     if (this.settingsService.getNewOrderAlerts() && this.authService.isAdmin()) {
       this.notificationService.show(
@@ -206,13 +232,48 @@ export class OrderService {
     }
   }
 
+  private syncToCloudDirect(ordersList: Order[]) {
+    this.http.put(this.cloudUrl, {
+      name: 'Pharmacy_Orders_Mariem_Store',
+      data: { orders: ordersList }
+    }).subscribe({
+      next: () => console.log('Orders synced to cloud successfully.'),
+      error: (err) => console.error('Cloud orders sync failed', err)
+    });
+  }
+
   updateOrderStatus(orderId: string, status: Order['status']) {
     const updated = this.orders().map(o => o.orderId === orderId ? { ...o, status } : o);
     this.orders.set(updated);
     if (typeof window !== 'undefined') {
       localStorage.setItem('pharmacy_orders', JSON.stringify(updated));
     }
-    this.syncToCloud(updated);
+    
+    this.http.get<any>(this.cloudUrl).subscribe({
+      next: (res) => {
+        let cloudOrders: Order[] = [];
+        if (res && res.data && Array.isArray(res.data.orders)) {
+          cloudOrders = res.data.orders;
+        }
+
+        const merged = cloudOrders.map(o => o.orderId === orderId ? { ...o, status } : o);
+        updated.forEach(lo => {
+          const exists = merged.some(co => co.orderId === lo.orderId);
+          if (!exists) {
+            merged.push(lo);
+          }
+        });
+
+        this.orders.set(merged);
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('pharmacy_orders', JSON.stringify(merged));
+        }
+        this.syncToCloudDirect(merged);
+      },
+      error: (err) => {
+        this.syncToCloudDirect(updated);
+      }
+    });
   }
 
   updateOrderReview(orderId: string, rating: number, comment: string) {
@@ -221,7 +282,32 @@ export class OrderService {
     if (typeof window !== 'undefined') {
       localStorage.setItem('pharmacy_orders', JSON.stringify(updated));
     }
-    this.syncToCloud(updated);
+    
+    this.http.get<any>(this.cloudUrl).subscribe({
+      next: (res) => {
+        let cloudOrders: Order[] = [];
+        if (res && res.data && Array.isArray(res.data.orders)) {
+          cloudOrders = res.data.orders;
+        }
+
+        const merged = cloudOrders.map(o => o.orderId === orderId ? { ...o, rating, reviewComment: comment } : o);
+        updated.forEach(lo => {
+          const exists = merged.some(co => co.orderId === lo.orderId);
+          if (!exists) {
+            merged.push(lo);
+          }
+        });
+
+        this.orders.set(merged);
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('pharmacy_orders', JSON.stringify(merged));
+        }
+        this.syncToCloudDirect(merged);
+      },
+      error: (err) => {
+        this.syncToCloudDirect(updated);
+      }
+    });
   }
 
   private setupStorageSync() {
