@@ -1,4 +1,5 @@
 import { Injectable, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { NotificationService } from './notification.service';
 import { SettingsService } from '../../services/settings';
 import { AuthService } from './auth';
@@ -121,7 +122,10 @@ export class OrderService {
     }
   ];
 
+  private cloudUrl = 'https://api.restful-api.dev/objects/ff8081819d82fab6019f3a78543d2679';
+
   constructor(
+    private http: HttpClient,
     private notificationService: NotificationService,
     private settingsService: SettingsService,
     private authService: AuthService
@@ -136,17 +140,53 @@ export class OrderService {
       if (stored) {
         try {
           this.orders.set(JSON.parse(stored));
-          return;
         } catch (e) {
-          console.error('Error parsing stored orders, resetting to default', e);
+          console.error(e);
         }
+      } else {
+        this.orders.set(this.mockOrders);
+        localStorage.setItem('pharmacy_orders', JSON.stringify(this.mockOrders));
       }
-      // Initialize with mock orders if empty
-      this.orders.set(this.mockOrders);
-      localStorage.setItem('pharmacy_orders', JSON.stringify(this.mockOrders));
     } else {
       this.orders.set(this.mockOrders);
     }
+
+    this.http.get<any>(this.cloudUrl).subscribe({
+      next: (res) => {
+        if (res && res.data && Array.isArray(res.data.orders)) {
+          const cloudOrders: Order[] = res.data.orders;
+          
+          if (cloudOrders.length > 0) {
+            const localOrders = this.orders();
+            const merged = [...cloudOrders];
+            localOrders.forEach(lo => {
+              const exists = merged.some(co => co.orderId === lo.orderId);
+              if (!exists) {
+                merged.push(lo);
+              }
+            });
+
+            this.orders.set(merged);
+            if (typeof window !== 'undefined') {
+              localStorage.setItem('pharmacy_orders', JSON.stringify(merged));
+            }
+          } else {
+            this.syncToCloud(this.orders());
+          }
+        }
+      },
+      error: (err) => console.log('Could not fetch cloud orders, using local storage.', err)
+    });
+  }
+
+  private syncToCloud(ordersList: Order[]) {
+    this.http.put(this.cloudUrl, {
+      name: 'Pharmacy_Orders_Mariem_Store',
+      data: { orders: ordersList }
+    }).subscribe({
+      next: () => console.log('Orders synced to cloud successfully.'),
+      error: (err) => console.error('Cloud orders sync failed', err)
+    });
   }
 
   addOrder(order: Order) {
@@ -156,7 +196,8 @@ export class OrderService {
       localStorage.setItem('pharmacy_orders', JSON.stringify(updated));
     }
     
-    // Trigger notification
+    this.syncToCloud(updated);
+
     if (this.settingsService.getNewOrderAlerts() && this.authService.isAdmin()) {
       this.notificationService.show(
         `🎉 New Order Placed! ID: ${order.orderId} by ${order.customerName}`,
@@ -171,6 +212,7 @@ export class OrderService {
     if (typeof window !== 'undefined') {
       localStorage.setItem('pharmacy_orders', JSON.stringify(updated));
     }
+    this.syncToCloud(updated);
   }
 
   updateOrderReview(orderId: string, rating: number, comment: string) {
@@ -179,6 +221,7 @@ export class OrderService {
     if (typeof window !== 'undefined') {
       localStorage.setItem('pharmacy_orders', JSON.stringify(updated));
     }
+    this.syncToCloud(updated);
   }
 
   private setupStorageSync() {

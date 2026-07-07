@@ -1,16 +1,54 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CustomerService {
+  private cloudUrl = 'https://api.restful-api.dev/objects/ff8081819d82fab6019f3a7854292678';
+
   constructor(private http: HttpClient){}
 
   getAllCustomers(): Observable<any>{
-    const merged = this.mergeLocalCustomers([]);
-    return of({ users: merged });
+    return this.http.get<any>(this.cloudUrl).pipe(
+      map(res => {
+        let cloudUsers: any[] = [];
+        if (res && res.data && Array.isArray(res.data.users)) {
+          cloudUsers = res.data.users;
+        }
+        const merged = this.mergeLocalCustomers(cloudUsers);
+        
+        // Sync back to cloud in background if local had new ones not in cloud
+        if (typeof window !== 'undefined') {
+          const stored = localStorage.getItem('local_registered_users');
+          if (stored) {
+            try {
+              const localUsers = JSON.parse(stored);
+              if (localUsers.length > cloudUsers.length) {
+                this.syncToCloud(merged);
+              }
+            } catch(e){}
+          }
+        }
+        return { users: merged };
+      }),
+      catchError(err => {
+        const merged = this.mergeLocalCustomers([]);
+        return of({ users: merged });
+      })
+    );
+  }
+
+  private syncToCloud(usersList: any[]) {
+    this.http.put(this.cloudUrl, {
+      name: 'Pharmacy_Users_Mariem_Store',
+      data: { users: usersList }
+    }).subscribe({
+      next: () => console.log('Users synced to cloud successfully.'),
+      error: (err) => console.error('Cloud users sync failed', err)
+    });
   }
 
   private mergeLocalCustomers(apiUsers: any[]): any[] {
@@ -73,14 +111,18 @@ export class CustomerService {
     }
     const exists = users.some(u => u.email && u.email.toLowerCase() === user.email.toLowerCase());
     if (!exists) {
-      users.push({
+      const newUser = {
         _id: 'reg-' + Math.random().toString(36).substr(2, 9),
         name: user.name,
         email: user.email,
         phone: user.phone || '',
         createdAt: new Date().toISOString()
-      });
+      };
+      users.push(newUser);
       localStorage.setItem('local_registered_users', JSON.stringify(users));
+      
+      const merged = this.mergeLocalCustomers(users);
+      this.syncToCloud(merged);
     }
   }
 }
