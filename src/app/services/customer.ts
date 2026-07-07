@@ -1,17 +1,39 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CustomerService {
   private apiUrl = 'https://ecommerce.routemisr.com/api/v1/users';
+  private cloudUrl = 'https://api.restful-api.dev/objects/ff8081819d82fab6019f3a7854292678';
 
-  constructor(){}
+  constructor(private http: HttpClient){}
 
   getAllCustomers(): Observable<any>{
-    const merged = this.mergeLocalCustomers([]);
-    return of({ users: merged });
+    return this.http.get<any>(this.apiUrl).pipe(
+      map(res => {
+        const apiUsers = res.users || [];
+        const merged = this.mergeLocalCustomers(apiUsers);
+        return { users: merged };
+      }),
+      catchError(err => {
+        const merged = this.mergeLocalCustomers([]);
+        return of({ users: merged });
+      })
+    );
+  }
+
+  private syncToCloud(usersList: any[]) {
+    this.http.put(this.cloudUrl, {
+      name: 'Pharmacy_Users_Mariem_Store',
+      data: { users: usersList }
+    }).subscribe({
+      next: () => console.log('Users synced to cloud successfully.'),
+      error: (err) => console.error('Cloud users sync failed', err)
+    });
   }
 
   private mergeLocalCustomers(apiUsers: any[]): any[] {
@@ -72,16 +94,50 @@ export class CustomerService {
         console.error(e);
       }
     }
+    
+    const newUser = {
+      _id: 'reg-' + Math.random().toString(36).substr(2, 9),
+      name: user.name,
+      email: user.email,
+      phone: user.phone || '',
+      createdAt: new Date().toISOString()
+    };
+
     const exists = users.some(u => u.email && u.email.toLowerCase() === user.email.toLowerCase());
     if (!exists) {
-      users.push({
-        _id: 'reg-' + Math.random().toString(36).substr(2, 9),
-        name: user.name,
-        email: user.email,
-        phone: user.phone || '',
-        createdAt: new Date().toISOString()
-      });
+      users.push(newUser);
       localStorage.setItem('local_registered_users', JSON.stringify(users));
     }
+
+    this.http.get<any>(this.cloudUrl).subscribe({
+      next: (res) => {
+        let cloudUsers: any[] = [];
+        if (res && res.data && Array.isArray(res.data.users)) {
+          cloudUsers = res.data.users;
+        }
+
+        const merged = [...cloudUsers];
+        
+        const existsInCloud = merged.some(cu => cu.email && cu.email.toLowerCase() === newUser.email.toLowerCase());
+        if (!existsInCloud) {
+          merged.push(newUser);
+        }
+
+        users.forEach(lu => {
+          const existsAlready = merged.some(cu => cu.email && cu.email.toLowerCase() === lu.email.toLowerCase());
+          if (!existsAlready) {
+            merged.push(lu);
+          }
+        });
+
+        const finalMerged = this.mergeLocalCustomers(merged);
+        this.syncToCloud(finalMerged);
+      },
+      error: (err) => {
+        console.error('Failed to get cloud users for saving, syncing locally only', err);
+        const finalMerged = this.mergeLocalCustomers(users);
+        this.syncToCloud(finalMerged);
+      }
+    });
   }
 }
