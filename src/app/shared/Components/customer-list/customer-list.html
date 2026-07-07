@@ -30,9 +30,7 @@
             </div>
             <div class="card-bottom">
                 <p><i class="fa-solid fa-envelope"></i> {{customer.email}}</p>
-                <!--
-                <p><i class="fa-solid fa-phone"></i> {{customer.Phone}}</p>
-                -->
+                <p><i class="fa-solid fa-phone"></i> {{customer.phone || 'No phone'}}</p>
                 <div class="stats">
                     <div class="stat"><strong>{{customer.orders}}</strong><br><small>ORDERS</small></div>
                     <div class="stat"><strong>EGP {{customer.spent}}</strong><br><small>SPENT</small></div>
