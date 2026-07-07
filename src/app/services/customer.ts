@@ -7,31 +7,15 @@ import { map, catchError } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class CustomerService {
-  private cloudUrl = 'https://api.restful-api.dev/objects/ff8081819d82fab6019f3a7854292678';
+  private apiUrl = 'https://ecommerce.routemisr.com/api/v1/users';
 
   constructor(private http: HttpClient){}
 
   getAllCustomers(): Observable<any>{
-    return this.http.get<any>(this.cloudUrl).pipe(
+    return this.http.get<any>(this.apiUrl).pipe(
       map(res => {
-        let cloudUsers: any[] = [];
-        if (res && res.data && Array.isArray(res.data.users)) {
-          cloudUsers = res.data.users;
-        }
-        const merged = this.mergeLocalCustomers(cloudUsers);
-        
-        // Sync back to cloud in background if local had new ones not in cloud
-        if (typeof window !== 'undefined') {
-          const stored = localStorage.getItem('local_registered_users');
-          if (stored) {
-            try {
-              const localUsers = JSON.parse(stored);
-              if (localUsers.length > cloudUsers.length) {
-                this.syncToCloud(merged);
-              }
-            } catch(e){}
-          }
-        }
+        const apiUsers = res.users || [];
+        const merged = this.mergeLocalCustomers(apiUsers);
         return { users: merged };
       }),
       catchError(err => {
@@ -39,16 +23,6 @@ export class CustomerService {
         return of({ users: merged });
       })
     );
-  }
-
-  private syncToCloud(usersList: any[]) {
-    this.http.put(this.cloudUrl, {
-      name: 'Pharmacy_Users_Mariem_Store',
-      data: { users: usersList }
-    }).subscribe({
-      next: () => console.log('Users synced to cloud successfully.'),
-      error: (err) => console.error('Cloud users sync failed', err)
-    });
   }
 
   private mergeLocalCustomers(apiUsers: any[]): any[] {
@@ -109,54 +83,16 @@ export class CustomerService {
         console.error(e);
       }
     }
-    
-    const newUser = {
-      _id: 'reg-' + Math.random().toString(36).substr(2, 9),
-      name: user.name,
-      email: user.email,
-      phone: user.phone || '',
-      createdAt: new Date().toISOString()
-    };
-
     const exists = users.some(u => u.email && u.email.toLowerCase() === user.email.toLowerCase());
     if (!exists) {
-      users.push(newUser);
+      users.push({
+        _id: 'reg-' + Math.random().toString(36).substr(2, 9),
+        name: user.name,
+        email: user.email,
+        phone: user.phone || '',
+        createdAt: new Date().toISOString()
+      });
       localStorage.setItem('local_registered_users', JSON.stringify(users));
     }
-
-    // Always fetch cloud data first, merge locally, and put back to prevent overwriting cloud state!
-    this.http.get<any>(this.cloudUrl).subscribe({
-      next: (res) => {
-        let cloudUsers: any[] = [];
-        if (res && res.data && Array.isArray(res.data.users)) {
-          cloudUsers = res.data.users;
-        }
-
-        const merged = [...cloudUsers];
-        
-        // Add new user if not in cloud
-        const existsInCloud = merged.some(cu => cu.email && cu.email.toLowerCase() === newUser.email.toLowerCase());
-        if (!existsInCloud) {
-          merged.push(newUser);
-        }
-
-        // Add any other local users
-        users.forEach(lu => {
-          const existsAlready = merged.some(cu => cu.email && cu.email.toLowerCase() === lu.email.toLowerCase());
-          if (!existsAlready) {
-            merged.push(lu);
-          }
-        });
-
-        // Merge with orders and sync
-        const finalMerged = this.mergeLocalCustomers(merged);
-        this.syncToCloud(finalMerged);
-      },
-      error: (err) => {
-        console.error('Failed to get cloud users for saving, syncing locally only', err);
-        const finalMerged = this.mergeLocalCustomers(users);
-        this.syncToCloud(finalMerged);
-      }
-    });
   }
 }

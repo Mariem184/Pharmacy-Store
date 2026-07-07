@@ -25,18 +25,16 @@
   </div>
 
   <div class="nav-content" [class.open]="isMenuOpen">
-    @if (isLoggesIn) {
-      <div class="search-bar-container">
-        <input
-          type="text"
-          placeholder="Search medicines, vitamins, brands..."
-          class="search-input"
-          [(ngModel)]="searchQuery"
-          (keyup.enter)="onSearch()"
-        >
-        <i class="fas fa-search search-icon" (click)="onSearch()"></i>
-      </div>
-    }
+    <div class="search-bar-container">
+      <input
+        type="text"
+        placeholder="Search medicines, vitamins, brands..."
+        class="search-input"
+        [(ngModel)]="searchQuery"
+        (keyup.enter)="onSearch()"
+      >
+      <i class="fas fa-search search-icon" (click)="onSearch()"></i>
+    </div>
 
     <div class="header-actions">
       <button class="action-btn" routerLink="/home" (click)="isMenuOpen = false">Home</button>
