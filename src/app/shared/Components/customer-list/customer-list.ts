@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectorRef, signal } from '@angular/core';
 import { CustomerService } from '../../../services/customer';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { OrderService } from '../../../core/Services/order.service';
 
 @Component({
   selector: 'app-customer-list',
@@ -19,6 +20,7 @@ export class CustomerList implements OnInit {
 
   constructor(
     private _customerService: CustomerService,
+    private _orderService: OrderService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -51,7 +53,23 @@ export class CustomerList implements OnInit {
   }
 
   get filteredCustomers() {
-    return this.customers().filter(c => {
+    return this.customers().map(c => {
+      const userEmail = c.email ? c.email.toLowerCase() : '';
+      const userName = c.name ? c.name.toLowerCase() : '';
+      
+      const userOrders = this._orderService.orders().filter(o => 
+        (o.customerEmail && o.customerEmail.toLowerCase() === userEmail) || 
+        (o.customerName && o.customerName.toLowerCase() === userName)
+      );
+      
+      const totalSpent = userOrders.reduce((sum, o) => sum + o.total, 0);
+      
+      return {
+        ...c,
+        orders: userOrders.length,
+        spent: totalSpent
+      };
+    }).filter(c => {
       const matchesSearch = c.name.toLowerCase().includes(this.searchText.toLowerCase());
 
       const now = new Date();
