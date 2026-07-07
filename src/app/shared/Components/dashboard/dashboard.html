@@ -2,7 +2,6 @@
   <!-- Header -->
   <div class="db-header">
     <h1>Dashboard</h1>
-    <p>Welcome back. Here's what's happening today.</p>
   </div>
 
   <!-- Stats Grid -->
@@ -72,7 +71,7 @@
         <span class="trend-badge">+18.4%</span>
       </div>
       <div class="chart-wrapper">
-        <svg viewBox="0 0 500 200" width="100%" height="150">
+        <svg viewBox="0 0 500 200" width="100%" height="220">
           <!-- Grid Lines -->
           <line x1="30" y1="30" x2="480" y2="30" stroke="#f1f3f5" stroke-dasharray="4"/>
           <line x1="30" y1="80" x2="480" y2="80" stroke="#f1f3f5" stroke-dasharray="4"/>
@@ -80,14 +79,14 @@
           <line x1="30" y1="180" x2="480" y2="180" stroke="#dee2e6"/>
 
           <!-- Shaded Area Under Curve -->
-          <path d="M 30 180 Q 110 140 190 150 T 350 110 T 480 80 L 480 180 Z" fill="rgba(11, 89, 94, 0.04)"/>
+          <path class="revenue-area" d="M 30 180 Q 110 140 190 150 T 350 110 T 480 80 L 480 180 Z" fill="rgba(11, 89, 94, 0.04)"/>
           
           <!-- Line path -->
-          <path d="M 30 180 Q 110 140 190 150 T 350 110 T 480 80" fill="none" stroke="#0b593e" stroke-width="3"/>
+          <path class="revenue-path" d="M 30 180 Q 110 140 190 150 T 350 110 T 480 80" fill="none" stroke="#0b593e" stroke-width="3"/>
           
           <!-- Tooltip Marker -->
-          <circle cx="480" cy="80" r="5" fill="#0b593e"/>
-          <circle cx="480" cy="80" r="9" fill="rgba(11, 89, 94, 0.2)"/>
+          <circle class="marker-dot" cx="480" cy="80" r="5" fill="#0b593e"/>
+          <circle class="marker-pulse" cx="480" cy="80" r="9" fill="rgba(11, 89, 94, 0.2)"/>
 
           <!-- X Axis Labels -->
           <text x="30" y="195" font-size="10" fill="#adb5bd" text-anchor="middle">Jan</text>
@@ -139,10 +138,6 @@
             <circle cx="50" cy="50" r="38" fill="transparent" stroke="#845ef7" stroke-width="12" 
                     stroke-dasharray="17 238" stroke-dashoffset="-210"/>
           </svg>
-          <div class="donut-center">
-            <span class="center-val">EGP {{ totalRevenue | number:'1.0-0' }}</span>
-            <span class="center-lbl">Total</span>
-          </div>
         </div>
         <div class="donut-legend">
           <div class="legend-item"><span class="dot green"></span> Tablets & Capsules <span class="pct">34%</span></div>
