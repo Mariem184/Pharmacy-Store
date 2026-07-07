@@ -59,7 +59,7 @@ export class CustomerService {
             const existsInLocal = localUsers.some(u => u.email && u.email.toLowerCase() === email.toLowerCase());
             if (!existsInApi && !existsInLocal) {
               localUsers.push({
-                _id: 'local-' + Math.random().toString(36).substr(2, 9),
+                _id: 'ord-' + email.toLowerCase().replace(/[^a-z0-9]/g, ''),
                 name: name,
                 email: email,
                 createdAt: order.date || new Date().toISOString()
