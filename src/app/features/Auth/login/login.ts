@@ -2,6 +2,7 @@ import { Component, ChangeDetectorRef } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../../core/Services/auth';
 import { Router, RouterLink } from '@angular/router';
+import { CustomerService } from '../../../services/customer';
 
 @Component({
   selector: 'app-login',
@@ -17,6 +18,7 @@ export class Login {
   constructor(
     private _AuthService: AuthService, 
     private _Router: Router,
+    private _customerService: CustomerService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -45,6 +47,13 @@ export class Login {
             localStorage.setItem('userToken', res.token);
             if (res.user && res.user.email) {
               localStorage.setItem('userEmail', res.user.email);
+              
+              // Register this user details locally so they show up in the Admin Customer list
+              this._customerService.saveLocalUser({
+                name: res.user.name || res.user.email.split('@')[0],
+                email: res.user.email,
+                phone: res.user.phone || ''
+              });
             }
             this._AuthService.decodeUserdata();
             

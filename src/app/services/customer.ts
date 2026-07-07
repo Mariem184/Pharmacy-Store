@@ -1,27 +1,16 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CustomerService {
-  private apiUrl = 'https://ecommerce.routemisr.com/api/v1/users';
   constructor(private http: HttpClient){}
 
   getAllCustomers(): Observable<any>{
-    return this.http.get(this.apiUrl).pipe(
-      map((res: any) => {
-        const users = res.users || [];
-        const merged = this.mergeLocalCustomers(users);
-        return { ...res, users: merged };
-      }),
-      catchError(err => {
-        const merged = this.mergeLocalCustomers([]);
-        return of({ users: merged });
-      })
-    );
+    const merged = this.mergeLocalCustomers([]);
+    return of({ users: merged });
   }
 
   private mergeLocalCustomers(apiUsers: any[]): any[] {
