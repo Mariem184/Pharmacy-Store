@@ -10,20 +10,38 @@
     <div class="nav-actions">
         <div class="notification-wrapper" (click)="toggleNotificationBox()" style="position: relative; cursor: pointer;">
             <i class="fa-regular fa-bell" style="font-size: 20px; color: #555;"></i>
-            <span class="bell-badge" *ngIf="lowStockCount > 0">{{ lowStockCount }}</span>
+            <span class="bell-badge" *ngIf="totalNotificationCount > 0">{{ totalNotificationCount }}</span>
             <div class="notification-box" *ngIf="showNotificationBox" (click)="$event.stopPropagation()">
                 <div class="box-header">
                     <h6>Notifications</h6>
                     <button class="close-btn" (click)="toggleNotificationBox()">×</button>
                 </div>
-                <div class="box-body">
-                    <div *ngIf="lowStockCount > 0">
-                        <p class="alert-text">
-                            <strong>Warning:</strong> There are <strong>{{ lowStockCount }}</strong> products running low on stock!
-                        </p>
-                        <p class="products-list">Products: {{ alertProductNames }}</p>
+                <div class="box-body" style="max-height: 250px; overflow-y: auto;">
+                    <!-- Pending Orders List -->
+                    <div *ngIf="pendingOrders.length > 0">
+                        <div *ngFor="let order of pendingOrders" class="notification-item order-alert" style="border-bottom: 1px solid #f3f4f6; padding-bottom: 10px; margin-bottom: 10px; text-align: left;">
+                            <p class="alert-text" style="color: #0b593e; font-weight: 700; margin: 0; font-size: 13px;">
+                                📦 New Order received!
+                            </p>
+                            <p style="margin: 4px 0 0 0; font-size: 11px; color: #495057; line-height: 1.4;">
+                                ID: <strong>{{ order.orderId }}</strong> by {{ order.customerName }}<br>
+                                Total: <strong>EGP {{ order.total | number:'1.2-2' }}</strong>
+                            </p>
+                        </div>
                     </div>
-                    <p *ngIf="lowStockCount === 0" class="empty-msg">All caught up! No new notifications.</p>
+
+                    <!-- Low Stock Alerts -->
+                    <div *ngIf="lowStockCount > 0" style="text-align: left; border-bottom: 1px solid #f3f4f6; padding-bottom: 10px; margin-bottom: 10px;">
+                        <p class="alert-text" style="margin: 0; font-size: 13px; font-weight: 700; color: #ef4444;">
+                            ⚠️ Low Stock Warning!
+                        </p>
+                        <p style="margin: 4px 0 0 0; font-size: 11px; color: #495057; line-height: 1.4;">
+                            There are <strong>{{ lowStockCount }}</strong> products running low on stock!<br>
+                            Products: <span style="color: #ef4444; font-weight: 600;">{{ alertProductNames }}</span>
+                        </p>
+                    </div>
+
+                    <p *ngIf="totalNotificationCount === 0" class="empty-msg">All caught up! No new notifications.</p>
                 </div>
             </div>
         </div>

@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectorRef, Output, EventEmitter } from '@ang
 import { CommonModule } from '@angular/common';
 import { SettingsService } from '../../../services/settings';
 import { AuthService } from '../../../core/Services/auth';
+import { OrderService } from '../../../core/Services/order.service';
 
 @Component({
   selector: 'app-header',
@@ -26,7 +27,8 @@ export class Header implements OnInit {
   constructor(
     private settingsService: SettingsService,
     private authService: AuthService,
-    private cdr: ChangeDetectorRef 
+    private cdr: ChangeDetectorRef,
+    private orderService: OrderService
   ) {}
 
   ngOnInit() {
@@ -70,5 +72,13 @@ export class Header implements OnInit {
       return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
     }
     return name.substring(0, 2).toUpperCase();
+  }
+
+  get pendingOrders() {
+    return this.orderService.orders().filter(o => o.status === 'Pending');
+  }
+
+  get totalNotificationCount(): number {
+    return this.lowStockCount + this.pendingOrders.length;
   }
 }
