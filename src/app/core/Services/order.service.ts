@@ -1,6 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { NotificationService } from './notification.service';
 import { SettingsService } from '../../services/settings';
+import { AuthService } from './auth';
 
 export interface OrderItem {
   id: string | number;
@@ -122,7 +123,8 @@ export class OrderService {
 
   constructor(
     private notificationService: NotificationService,
-    private settingsService: SettingsService
+    private settingsService: SettingsService,
+    private authService: AuthService
   ) {
     this.loadOrders();
     this.setupStorageSync();
@@ -155,7 +157,7 @@ export class OrderService {
     }
     
     // Trigger notification
-    if (this.settingsService.getNewOrderAlerts()) {
+    if (this.settingsService.getNewOrderAlerts() && this.authService.isAdmin()) {
       this.notificationService.show(
         `🎉 New Order Placed! ID: ${order.orderId} by ${order.customerName}`,
         'success'
@@ -193,7 +195,7 @@ export class OrderService {
               );
               
               addedOrders.forEach(order => {
-                if (this.settingsService.getNewOrderAlerts()) {
+                if (this.settingsService.getNewOrderAlerts() && this.authService.isAdmin()) {
                   this.notificationService.show(
                     `🎉 New Order Placed! ID: ${order.orderId} by ${order.customerName}`,
                     'success'

@@ -1,5 +1,6 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { SettingsService } from '../../services/settings';
+import { NotificationService } from './notification.service';
 
 export interface CartItem {
   id: string;
@@ -32,7 +33,10 @@ export class CartService {
     return this.cartSubtotal() >= this.settingsService.getDeliveryThreshold();
   });
 
-  constructor(private settingsService: SettingsService) {
+  constructor(
+    private settingsService: SettingsService,
+    private notificationService: NotificationService
+  ) {
     // Load initial cart from localStorage in browser context
     if (typeof window !== 'undefined') {
       const savedCart = localStorage.getItem('cart');
@@ -71,6 +75,9 @@ export class CartService {
 
     this.cartItems.set(items);
     this.saveCartToLocalStorage(items);
+
+    // Show Toast alert to confirm addition
+    this.notificationService.show(`🟢 ${product.name} added to cart!`, 'success');
   }
 
   updateQuantity(productId: string, delta: number) {

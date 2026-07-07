@@ -53,16 +53,12 @@ export class Header implements OnInit {
       this.cdr.detectChanges();
     });
     this.settingsService.lowStockProducts$.subscribe(products => {
-      const isAlertEnabled = typeof localStorage !== 'undefined' && localStorage.getItem('lowStockAlert') !== 'false';
+      const isAlertEnabled = this.settingsService.getLowStockAlert();
 
       if (isAlertEnabled) {
         this.alertProducts = products;
         this.lowStockCount = products.length;
         this.alertProductNames = products.map(p => p.name || 'Product').join(', ');
-        
-        if (products.length > 0) {
-        }
-
       } else {
         this.alertProducts = [];
         this.lowStockCount = 0;
@@ -88,10 +84,15 @@ export class Header implements OnInit {
 
   get orderNotifications() {
     const dismissed = this.dismissedNotificationIds();
-    return this.orderService.orders().filter(o => 
-      (o.status === 'Pending' || o.status === 'Cancelled') && 
-      !dismissed.includes(o.orderId)
-    );
+    const showNewOrders = this.settingsService.getNewOrderAlerts();
+    const showReturnRequests = this.settingsService.getReturnRequests();
+
+    return this.orderService.orders().filter(o => {
+      if (dismissed.includes(o.orderId)) return false;
+      if (o.status === 'Pending') return showNewOrders;
+      if (o.status === 'Cancelled') return showReturnRequests;
+      return false;
+    });
   }
 
   get totalNotificationCount(): number {

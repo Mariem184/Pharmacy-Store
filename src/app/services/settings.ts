@@ -81,6 +81,14 @@ export class SettingsService {
     return this.settingsSubject.value.newOrderAlerts ?? true;
   }
 
+  getReturnRequests(): boolean {
+    return this.settingsSubject.value.returnRequests ?? true;
+  }
+
+  getLowStockAlert(): boolean {
+    return this.settingsSubject.value.lowStockAlert ?? true;
+  }
+
   getProducts(): Observable<any[]> {
     return this.http.get<any[]> ('https://raw.githubusercontent.com/Mariem184/pharmacy-api/refs/heads/main/products.json');
   }
