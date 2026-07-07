@@ -121,6 +121,7 @@ export class OrderService {
 
   constructor(private notificationService: NotificationService) {
     this.loadOrders();
+    this.setupStorageSync();
   }
 
   private loadOrders() {
@@ -169,6 +170,36 @@ export class OrderService {
     this.orders.set(updated);
     if (typeof window !== 'undefined') {
       localStorage.setItem('pharmacy_orders', JSON.stringify(updated));
+    }
+  }
+
+  private setupStorageSync() {
+    if (typeof window !== 'undefined') {
+      window.addEventListener('storage', (event) => {
+        if (event.key === 'pharmacy_orders' && event.newValue) {
+          try {
+            const oldOrders = this.orders();
+            const newOrders: Order[] = JSON.parse(event.newValue);
+            
+            if (newOrders.length > oldOrders.length) {
+              const addedOrders = newOrders.filter(
+                newO => !oldOrders.some(oldO => oldO.orderId === newO.orderId)
+              );
+              
+              addedOrders.forEach(order => {
+                this.notificationService.show(
+                  `🎉 New Order Placed! ID: ${order.orderId} by ${order.customerName}`,
+                  'success'
+                );
+              });
+            }
+            
+            this.orders.set(newOrders);
+          } catch (e) {
+            console.error('Error handling storage sync:', e);
+          }
+        }
+      });
     }
   }
 }
