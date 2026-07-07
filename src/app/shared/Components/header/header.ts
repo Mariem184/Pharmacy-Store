@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, Output, EventEmitter } from '@angular/core'; 
+import { Component, OnInit, ChangeDetectorRef, Output, EventEmitter, signal } from '@angular/core'; 
 import { CommonModule } from '@angular/common';
 import { SettingsService } from '../../../services/settings';
 import { AuthService } from '../../../core/Services/auth';
@@ -23,6 +23,7 @@ export class Header implements OnInit {
   alertProductNames: string = '';
   showNotificationBox: boolean = false; 
   adminInitials: string = 'AM';
+  dismissedNotificationIds = signal<string[]>([]);
 
   constructor(
     private settingsService: SettingsService,
@@ -32,6 +33,17 @@ export class Header implements OnInit {
   ) {}
 
   ngOnInit() {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('dismissed_notifications');
+      if (stored) {
+        try {
+          this.dismissedNotificationIds.set(JSON.parse(stored));
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    }
+
     this.authService.userData.subscribe((user: any) => {
       if (user && user.name) {
         this.adminInitials = this.getInitials(user.name);
@@ -74,11 +86,25 @@ export class Header implements OnInit {
     return name.substring(0, 2).toUpperCase();
   }
 
-  get pendingOrders() {
-    return this.orderService.orders().filter(o => o.status === 'Pending');
+  get orderNotifications() {
+    const dismissed = this.dismissedNotificationIds();
+    return this.orderService.orders().filter(o => 
+      (o.status === 'Pending' || o.status === 'Cancelled') && 
+      !dismissed.includes(o.orderId)
+    );
   }
 
   get totalNotificationCount(): number {
-    return this.lowStockCount + this.pendingOrders.length;
+    return this.lowStockCount + this.orderNotifications.length;
+  }
+
+  dismissNotification(orderId: string, event: Event) {
+    event.stopPropagation();
+    const updated = [...this.dismissedNotificationIds(), orderId];
+    this.dismissedNotificationIds.set(updated);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('dismissed_notifications', JSON.stringify(updated));
+    }
+    this.cdr.detectChanges();
   }
 }

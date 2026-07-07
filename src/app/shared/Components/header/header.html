@@ -17,16 +17,37 @@
                     <button class="close-btn" (click)="toggleNotificationBox()">×</button>
                 </div>
                 <div class="box-body" style="max-height: 250px; overflow-y: auto;">
-                    <!-- Pending Orders List -->
-                    <div *ngIf="pendingOrders.length > 0">
-                        <div *ngFor="let order of pendingOrders" class="notification-item order-alert" style="border-bottom: 1px solid #f3f4f6; padding-bottom: 10px; margin-bottom: 10px; text-align: left;">
-                            <p class="alert-text" style="color: #0b593e; font-weight: 700; margin: 0; font-size: 13px;">
-                                📦 New Order received!
-                            </p>
-                            <p style="margin: 4px 0 0 0; font-size: 11px; color: #495057; line-height: 1.4;">
-                                ID: <strong>{{ order.orderId }}</strong> by {{ order.customerName }}<br>
-                                Total: <strong>EGP {{ order.total | number:'1.2-2' }}</strong>
-                            </p>
+                    <!-- Order Notifications (Pending / Cancelled) -->
+                    <div *ngIf="orderNotifications.length > 0">
+                        <div *ngFor="let order of orderNotifications" class="notification-item order-alert" style="border-bottom: 1px solid #f3f4f6; padding-bottom: 10px; margin-bottom: 10px; text-align: left; position: relative;">
+                            <button 
+                                (click)="dismissNotification(order.orderId, $event)" 
+                                style="position: absolute; right: 0; top: 0; background: none; border: none; font-size: 13px; color: #9ca3af; cursor: pointer; padding: 2px 5px;"
+                                title="Dismiss notification">
+                                ×
+                            </button>
+                            
+                            <!-- Pending state -->
+                            <div *ngIf="order.status === 'Pending'">
+                                <p class="alert-text" style="color: #0b593e; font-weight: 700; margin: 0; font-size: 13px; padding-right: 15px;">
+                                    📦 New Order received!
+                                </p>
+                                <p style="margin: 4px 0 0 0; font-size: 11px; color: #495057; line-height: 1.4;">
+                                    ID: <strong>{{ order.orderId }}</strong> by {{ order.customerName }}<br>
+                                    Total: <strong>EGP {{ order.total | number:'1.2-2' }}</strong>
+                                </p>
+                            </div>
+
+                            <!-- Cancelled state -->
+                            <div *ngIf="order.status === 'Cancelled'">
+                                <p class="alert-text" style="color: #ef4444; font-weight: 700; margin: 0; font-size: 13px; padding-right: 15px;">
+                                    ❌ Order Cancelled!
+                                </p>
+                                <p style="margin: 4px 0 0 0; font-size: 11px; color: #495057; line-height: 1.4;">
+                                    ID: <strong>{{ order.orderId }}</strong> by {{ order.customerName }}<br>
+                                    Total: <strong>EGP {{ order.total | number:'1.2-2' }}</strong>
+                                </p>
+                            </div>
                         </div>
                     </div>
 
