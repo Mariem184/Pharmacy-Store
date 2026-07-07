@@ -27,11 +27,14 @@ export class CustomerList implements OnInit {
   ngOnInit() {
     this._customerService.getAllCustomers().subscribe({
       next: (res) => {
-        // Exclude admin accounts from the customer list
+        const deletedStr = typeof localStorage !== 'undefined' ? localStorage.getItem('deleted_customer_ids') : null;
+        const deletedIds: string[] = deletedStr ? JSON.parse(deletedStr) : [];
+
+        // Exclude admin accounts and deleted customers from the customer list
         const filtered = (res.users || []).filter((user: any) => {
           const email = user.email ? user.email.toLowerCase() : '';
           const role = user.role ? user.role.toLowerCase() : '';
-          return !(role === 'admin' || email.includes('admin'));
+          return !(role === 'admin' || email.includes('admin') || deletedIds.includes(user._id));
         });
         
         // Setting the signal notifies Angular to schedule change detection automatically
@@ -98,6 +101,16 @@ export class CustomerList implements OnInit {
 
   deleteCustomer(id: string) {
     if (confirm('Are you sure you want to delete this customer?')) {
+      if (typeof localStorage !== 'undefined') {
+        const deletedStr = localStorage.getItem('deleted_customer_ids') || '[]';
+        try {
+          const deleted = JSON.parse(deletedStr);
+          deleted.push(id);
+          localStorage.setItem('deleted_customer_ids', JSON.stringify(deleted));
+        } catch (e) {
+          console.error(e);
+        }
+      }
       this.customers.set(this.customers().filter(c => c._id !== id));
       console.log('Deleted customer with ID:', id);
     }
