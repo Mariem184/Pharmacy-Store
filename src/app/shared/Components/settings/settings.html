@@ -84,24 +84,4 @@
 
 
 
-<div class="alert-container" *ngIf="settings && (settings.lowStockAlert || settings.lowStockAlerts)">
-    <div class="alert-card" *ngFor="let p of products; let i = index">
-        <button class="close-alert-btn" (click)="products.splice(i, 1)">&times;</button>
-    
-        <div class="alert-icon">
-            <i class="fas fa-exclamation-triangle"></i>
-        </div>
-        <div class="alert-content">
-            <h4>Low Stock Alert!</h4>
-            <p>Medicine: <strong>{{ p.name || p.title }}</strong></p>
-            <small>Remaining: <span class="stock-count">{{ p.stock ?? p.quantity }}</span> units left</small>
-        </div>
-    </div>
-</div>
-
-
-
-
-
-
 </div>
