@@ -56,41 +56,67 @@ export class CustomerList implements OnInit {
   }
 
   get filteredCustomers() {
-    return this.customers().map(c => {
-      const userEmail = c.email ? c.email.toLowerCase() : '';
-      const userName = c.name ? c.name.toLowerCase() : '';
-      
-      const userOrders = this._orderService.orders().filter(o => 
-        (o.customerEmail && o.customerEmail.toLowerCase() === userEmail) || 
-        (o.customerName && o.customerName.toLowerCase() === userName)
-      );
-      
-      const totalSpent = userOrders.reduce((sum, o) => sum + o.total, 0);
-      
-      return {
-        ...c,
-        orders: userOrders.length,
-        spent: totalSpent
-      };
-    }).filter(c => {
-      const matchesSearch = c.name.toLowerCase().includes(this.searchText.toLowerCase());
+    const apiAndLocalCustomers = this.customers();
+    const mergedList = [...apiAndLocalCustomers];
 
-      const now = new Date();
-      const cDate = new Date(c.createdAt);
-      let matchesFilter = false;
-
-      if (this.selectedFilter === 'All') {
-        matchesFilter = true;
-      } else if (this.selectedFilter === 'Today') {
-        matchesFilter = cDate.toDateString() === now.toDateString();
-      } else if (this.selectedFilter === 'This Month') {
-        matchesFilter = cDate.getMonth() === now.getMonth() &&
-          cDate.getFullYear() === now.getFullYear();
-      } else if (this.selectedFilter === 'This Year') {
-        matchesFilter = cDate.getFullYear() === now.getFullYear();
+    const orders = this._orderService.orders();
+    orders.forEach(order => {
+      const email = order.customerEmail;
+      const name = order.customerName;
+      if (email && name) {
+        const exists = mergedList.some(c => c.email && c.email.toLowerCase() === email.toLowerCase());
+        if (!exists) {
+          mergedList.push({
+            _id: 'ord-' + email.toLowerCase().replace(/[^a-z0-9]/g, ''),
+            name: name,
+            email: email,
+            phone: order.customerPhone || '',
+            createdAt: order.date || new Date().toISOString()
+          });
+        }
       }
-      return matchesSearch && matchesFilter;
     });
+
+    const deletedStr = typeof localStorage !== 'undefined' ? localStorage.getItem('deleted_customer_ids') : null;
+    const deletedIds: string[] = deletedStr ? JSON.parse(deletedStr) : [];
+
+    return mergedList
+      .filter(c => !deletedIds.includes(c._id))
+      .map(c => {
+        const userEmail = c.email ? c.email.toLowerCase() : '';
+        const userName = c.name ? c.name.toLowerCase() : '';
+        
+        const userOrders = orders.filter(o => 
+          (o.customerEmail && o.customerEmail.toLowerCase() === userEmail) || 
+          (o.customerName && o.customerName.toLowerCase() === userName)
+        );
+        
+        const totalSpent = userOrders.reduce((sum, o) => sum + o.total, 0);
+        
+        return {
+          ...c,
+          orders: userOrders.length,
+          spent: totalSpent
+        };
+      }).filter(c => {
+        const matchesSearch = c.name.toLowerCase().includes(this.searchText.toLowerCase());
+
+        const now = new Date();
+        const cDate = new Date(c.createdAt);
+        let matchesFilter = false;
+
+        if (this.selectedFilter === 'All') {
+          matchesFilter = true;
+        } else if (this.selectedFilter === 'Today') {
+          matchesFilter = cDate.toDateString() === now.toDateString();
+        } else if (this.selectedFilter === 'This Month') {
+          matchesFilter = cDate.getMonth() === now.getMonth() &&
+            cDate.getFullYear() === now.getFullYear();
+        } else if (this.selectedFilter === 'This Year') {
+          matchesFilter = cDate.getFullYear() === now.getFullYear();
+        }
+        return matchesSearch && matchesFilter;
+      });
   }
 
   setFilter(filter: string) {
