@@ -23,7 +23,9 @@ export class ProductService {
       const stored = localStorage.getItem('pharmacy_products');
       if (stored) {
         try {
-          this.productsSubject.next(JSON.parse(stored));
+          const parsed = JSON.parse(stored);
+          const mapped = this.mapStockProperties(parsed);
+          this.productsSubject.next(mapped);
           return;
         } catch (e) {
           console.error(e);
@@ -34,12 +36,32 @@ export class ProductService {
     this.http.get<any>(this.apiUrl).subscribe({
       next: (res) => {
         const list = res.products || [];
-        this.productsSubject.next(list);
+        const mapped = this.mapStockProperties(list);
+        this.productsSubject.next(mapped);
         if (typeof window !== 'undefined') {
-          localStorage.setItem('pharmacy_products', JSON.stringify(list));
+          localStorage.setItem('pharmacy_products', JSON.stringify(mapped));
         }
       },
       error: (err) => console.error('Failed to fetch initial products', err)
+    });
+  }
+
+  private mapStockProperties(list: any[]): any[] {
+    return list.map(p => {
+      let stockVal = 0;
+      if (p.stock !== undefined) {
+        stockVal = Number(p.stock);
+      } else if (p.quantity !== undefined) {
+        stockVal = Number(p.quantity);
+      } else if (p.inStock === true) {
+        stockVal = 15;
+      }
+      return {
+        ...p,
+        stock: stockVal,
+        quantity: stockVal,
+        inStock: stockVal > 0
+      };
     });
   }
 
