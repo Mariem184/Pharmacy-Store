@@ -1,39 +1,60 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CustomerService {
-  private apiUrl = 'https://ecommerce.routemisr.com/api/v1/users';
-  private cloudUrl = 'https://api.restful-api.dev/objects/ff8081819d82fab6019f3a7854292678';
+  private mockCustomers = [
+    {
+      _id: 'cust-1',
+      name: 'Ahmed Mansour',
+      email: 'ahmed.mansour@email.com',
+      phone: '01023456789',
+      createdAt: '2026-05-10T10:00:00.000Z'
+    },
+    {
+      _id: 'cust-2',
+      name: 'Mariam Ali',
+      email: 'mariam.ali@email.com',
+      phone: '01198765432',
+      createdAt: '2026-05-15T11:30:00.000Z'
+    },
+    {
+      _id: 'cust-3',
+      name: 'Sarah Hassan',
+      email: 'sarah.hassan@email.com',
+      phone: '01234567890',
+      createdAt: '2026-06-01T09:15:00.000Z'
+    },
+    {
+      _id: 'cust-4',
+      name: 'Omar Ibrahim',
+      email: 'omar.ibrahim@email.com',
+      phone: '01543210987',
+      createdAt: '2026-06-12T14:45:00.000Z'
+    },
+    {
+      _id: 'cust-5',
+      name: 'Yasmine Gad',
+      email: 'yasmine.gad@email.com',
+      phone: '01065432109',
+      createdAt: '2026-06-20T16:20:00.000Z'
+    },
+    {
+      _id: 'cust-6',
+      name: 'Khaled Youssef',
+      email: 'khaled.youssef@email.com',
+      phone: '01123456789',
+      createdAt: '2026-07-01T12:00:00.000Z'
+    }
+  ];
 
-  constructor(private http: HttpClient){}
+  constructor(){}
 
   getAllCustomers(): Observable<any>{
-    return this.http.get<any>(this.apiUrl).pipe(
-      map(res => {
-        const apiUsers = res.users || [];
-        const merged = this.mergeLocalCustomers(apiUsers);
-        return { users: merged };
-      }),
-      catchError(err => {
-        const merged = this.mergeLocalCustomers([]);
-        return of({ users: merged });
-      })
-    );
-  }
-
-  private syncToCloud(usersList: any[]) {
-    this.http.put(this.cloudUrl, {
-      name: 'Pharmacy_Users_Mariem_Store',
-      data: { users: usersList }
-    }).subscribe({
-      next: () => console.log('Users synced to cloud successfully.'),
-      error: (err) => console.error('Cloud users sync failed', err)
-    });
+    const merged = this.mergeLocalCustomers(this.mockCustomers);
+    return of({ users: merged });
   }
 
   private mergeLocalCustomers(apiUsers: any[]): any[] {
@@ -110,50 +131,16 @@ export class CustomerService {
         console.error(e);
       }
     }
-    
-    const newUser = {
-      _id: 'reg-' + Math.random().toString(36).substr(2, 9),
-      name: user.name,
-      email: user.email,
-      phone: user.phone || '',
-      createdAt: new Date().toISOString()
-    };
-
     const exists = users.some(u => u.email && u.email.toLowerCase() === user.email.toLowerCase());
     if (!exists) {
-      users.push(newUser);
+      users.push({
+        _id: 'reg-' + Math.random().toString(36).substr(2, 9),
+        name: user.name,
+        email: user.email,
+        phone: user.phone || '',
+        createdAt: new Date().toISOString()
+      });
       localStorage.setItem('local_registered_users', JSON.stringify(users));
     }
-
-    this.http.get<any>(this.cloudUrl).subscribe({
-      next: (res) => {
-        let cloudUsers: any[] = [];
-        if (res && res.data && Array.isArray(res.data.users)) {
-          cloudUsers = res.data.users;
-        }
-
-        const merged = [...cloudUsers];
-        
-        const existsInCloud = merged.some(cu => cu.email && cu.email.toLowerCase() === newUser.email.toLowerCase());
-        if (!existsInCloud) {
-          merged.push(newUser);
-        }
-
-        users.forEach(lu => {
-          const existsAlready = merged.some(cu => cu.email && cu.email.toLowerCase() === lu.email.toLowerCase());
-          if (!existsAlready) {
-            merged.push(lu);
-          }
-        });
-
-        const finalMerged = this.mergeLocalCustomers(merged);
-        this.syncToCloud(finalMerged);
-      },
-      error: (err) => {
-        console.error('Failed to get cloud users for saving, syncing locally only', err);
-        const finalMerged = this.mergeLocalCustomers(users);
-        this.syncToCloud(finalMerged);
-      }
-    });
   }
 }
