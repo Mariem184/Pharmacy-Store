@@ -58,7 +58,7 @@ export class Login {
             this._AuthService.decodeUserdata();
             
             if (this._AuthService.isAdmin()) {
-              this._Router.navigate(['/admin/settings']);
+              this._Router.navigate(['/admin/dashboard']);
             } else {
               this._Router.navigate(['/home']);
             }
