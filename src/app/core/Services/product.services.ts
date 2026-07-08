@@ -1,36 +1,81 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject } from 'rxjs'; 
+import { Observable, BehaviorSubject, of } from 'rxjs'; 
 import { map } from 'rxjs/operators'; 
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProductService {
-
   searchQuery: string = ''; 
-  // تعديل الرابط للمسار الصحيح تماماً لـ GitHub Raw
   apiUrl = 'https://raw.githubusercontent.com/Mariem184/pharmacy-api/refs/heads/main/products.json';  
   categoryChanged = new BehaviorSubject<string>('All Product'); 
+  
+  private productsSubject = new BehaviorSubject<any[]>([]);
+  products$ = this.productsSubject.asObservable();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    this.initProducts();
+  }
 
-  // تأمين الدالة الأساسية لتخرج المصفوفة مباشرة للـ Component
+  private initProducts() {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('pharmacy_products');
+      if (stored) {
+        try {
+          this.productsSubject.next(JSON.parse(stored));
+          return;
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    }
+
+    this.http.get<any>(this.apiUrl).subscribe({
+      next: (res) => {
+        const list = res.products || [];
+        this.productsSubject.next(list);
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('pharmacy_products', JSON.stringify(list));
+        }
+      },
+      error: (err) => console.error('Failed to fetch initial products', err)
+    });
+  }
+
   getProducts(): Observable<any[]> {
-    return this.http.get<any>(this.apiUrl).pipe(
-      map(response => response.products || [])
-    );
+    return this.products$;
+  }
+
+  addProduct(product: any) {
+    const list = [...this.productsSubject.value, product];
+    this.productsSubject.next(list);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('pharmacy_products', JSON.stringify(list));
+    }
+  }
+
+  updateProduct(updatedProduct: any) {
+    const list = this.productsSubject.value.map(p => p.id === updatedProduct.id ? updatedProduct : p);
+    this.productsSubject.next(list);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('pharmacy_products', JSON.stringify(list));
+    }
+  }
+
+  deleteProduct(id: any) {
+    const list = this.productsSubject.value.filter(p => p.id !== id);
+    this.productsSubject.next(list);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('pharmacy_products', JSON.stringify(list));
+    }
   }
 
   searchProducts(keyword: string): Observable<any[]> {
-    return this.http.get<any>(this.apiUrl).pipe(
-      map(response => {
-        const productsList = response.products || []; 
-        
+    return this.products$.pipe(
+      map(productsList => {
         if (!keyword.trim()) return productsList;
-        
         return productsList.filter((product: any) => {
-          // فحص كل الاحتمالات لاسم المنتج في الـ JSON لضمان عدم حدوث خطأ
           const productName = product.name || product.title || product.productName || '';
           return productName.toLowerCase().includes(keyword.toLowerCase());
         });

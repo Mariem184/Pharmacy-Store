@@ -13,6 +13,7 @@ import { Login } from './features/Auth/login/login';
 import { Register } from './features/Auth/register/register';
 import { ProductDetails } from './features/Pages/product-details/product-details';
 import { LocationComponent } from './features/Pages/location/location';
+import { ProductsComponent } from './shared/Components/products/products';
 export const routes: Routes = [
   {
     path: 'home',
@@ -65,7 +66,8 @@ export const routes: Routes = [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'customers', component: CustomerList },
       { path: 'settings', component: SettingsComponent },
-      { path: 'orders', component: OrdersComponent }
+      { path: 'orders', component: OrdersComponent },
+      { path: 'products', component: ProductsComponent }
     ]
   },
   { path: '', redirectTo: '/admin/dashboard', pathMatch: 'full'}

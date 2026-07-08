@@ -21,6 +21,8 @@ export class Header implements OnInit {
   lowStockCount: number = 0;
   alertProducts: any[] = [];
   alertProductNames: string = '';
+  outOfStockCount: number = 0;
+  outOfStockProductNames: string = '';
   showNotificationBox: boolean = false; 
   adminInitials: string = 'AM';
   dismissedNotificationIds = signal<string[]>([]);
@@ -56,13 +58,20 @@ export class Header implements OnInit {
       const isAlertEnabled = this.settingsService.getLowStockAlert();
 
       if (isAlertEnabled) {
-        this.alertProducts = products;
-        this.lowStockCount = products.length;
-        this.alertProductNames = products.map(p => p.name || 'Product').join(', ');
+        const lowStock = products.filter(p => Number(p.stock) > 0 && Number(p.stock) <= 10);
+        this.alertProducts = lowStock;
+        this.lowStockCount = lowStock.length;
+        this.alertProductNames = lowStock.map(p => p.name || p.title || 'Product').join(', ');
+
+        const outOfStock = products.filter(p => Number(p.stock) === 0);
+        this.outOfStockCount = outOfStock.length;
+        this.outOfStockProductNames = outOfStock.map(p => p.name || p.title || 'Product').join(', ');
       } else {
         this.alertProducts = [];
         this.lowStockCount = 0;
         this.alertProductNames = '';
+        this.outOfStockCount = 0;
+        this.outOfStockProductNames = '';
       }
 
       this.cdr.detectChanges();
@@ -96,7 +105,7 @@ export class Header implements OnInit {
   }
 
   get totalNotificationCount(): number {
-    return this.lowStockCount + this.orderNotifications.length;
+    return this.lowStockCount + this.outOfStockCount + this.orderNotifications.length;
   }
 
   dismissNotification(orderId: string, event: Event) {
