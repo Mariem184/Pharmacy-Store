@@ -149,7 +149,7 @@ export class Cart implements OnInit {
           image: item.image
         })),
         status: 'Pending' as const,
-        total: this.cartService.cartSubtotal() + 20, // Total + shipping fee EGP 20
+        total: this.cartService.cartSubtotal() + (this.cartService.isFreeDeliveryApplied() ? 0 : 35),
         paymentMethod: this.selectedPaymentMethod,
         shippingAddress: `${this.shippingAddress}, ${this.shippingCity}`
       };
