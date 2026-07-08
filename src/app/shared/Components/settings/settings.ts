@@ -43,7 +43,7 @@ export class SettingsComponent implements OnInit {
 
     this.settingsService.getProducts().subscribe((data: any) => {
       const allProducts = Array.isArray(data) ? data : (data.products || data.data || []);
-      this.products = allProducts.filter((p: any) => (p.stock ?? p.quantity) < 10);
+      this.products = allProducts.filter((p: any) => (p.stock ?? p.quantity) <= 10);
       
       this.checkAndBroadcastAlerts();
       this.cdr.detectChanges(); 

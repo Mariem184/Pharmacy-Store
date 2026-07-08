@@ -45,7 +45,7 @@ export class DashboardComponent implements OnInit {
         this.totalProductsCount.set(allProducts.length);
         
         // Filter low stock
-        const lowStock = allProducts.filter((p: any) => (p.stock ?? p.quantity) < 10);
+        const lowStock = allProducts.filter((p: any) => (p.stock ?? p.quantity) <= 10);
         this.lowStockProducts.set(lowStock);
         
         this.cdr.detectChanges();
