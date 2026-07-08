@@ -122,6 +122,23 @@ export class CustomerService {
 
   saveLocalUser(user: { name: string; email: string; phone?: string }) {
     if (typeof localStorage === 'undefined') return;
+
+    const emailClean = user.email.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+    // Restore from deleted list if previously deleted
+    const deletedStr = localStorage.getItem('deleted_customer_ids');
+    if (deletedStr) {
+      try {
+        let deleted: string[] = JSON.parse(deletedStr);
+        deleted = deleted.filter(id => {
+          return id !== 'ord-' + emailClean && id !== 'reg-' + emailClean && !id.includes(emailClean) && id !== user.email.toLowerCase();
+        });
+        localStorage.setItem('deleted_customer_ids', JSON.stringify(deleted));
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
     const stored = localStorage.getItem('local_registered_users');
     let users: any[] = [];
     if (stored) {
@@ -131,16 +148,22 @@ export class CustomerService {
         console.error(e);
       }
     }
-    const exists = users.some(u => u.email && u.email.toLowerCase() === user.email.toLowerCase());
-    if (!exists) {
+
+    const existingUser = users.find(u => u.email && u.email.toLowerCase() === user.email.toLowerCase());
+    if (!existingUser) {
       users.push({
-        _id: 'reg-' + Math.random().toString(36).substr(2, 9),
+        _id: 'reg-' + emailClean,
         name: user.name,
         email: user.email,
         phone: user.phone || '',
         createdAt: new Date().toISOString()
       });
       localStorage.setItem('local_registered_users', JSON.stringify(users));
+    } else {
+      if (!existingUser.phone && user.phone) {
+        existingUser.phone = user.phone;
+        localStorage.setItem('local_registered_users', JSON.stringify(users));
+      }
     }
   }
 }

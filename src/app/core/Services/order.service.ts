@@ -187,6 +187,22 @@ export class OrderService {
   }
 
   addOrder(order: Order) {
+    if (typeof window !== 'undefined') {
+      const deletedStr = localStorage.getItem('deleted_customer_ids');
+      if (deletedStr) {
+        try {
+          let deleted: string[] = JSON.parse(deletedStr);
+          const emailClean = order.customerEmail.toLowerCase().replace(/[^a-z0-9]/g, '');
+          deleted = deleted.filter(id => {
+            return id !== 'ord-' + emailClean && id !== 'reg-' + emailClean && !id.includes(emailClean) && id !== order.customerEmail.toLowerCase();
+          });
+          localStorage.setItem('deleted_customer_ids', JSON.stringify(deleted));
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    }
+
     const localUpdated = [order, ...this.orders()];
     this.orders.set(localUpdated);
     if (typeof window !== 'undefined') {
