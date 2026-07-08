@@ -43,11 +43,26 @@ export class ProductsComponent implements OnInit {
 
   ngOnInit() {
     this.productService.getProducts().subscribe(list => {
-      this.products = list;
+      this.products = list.map(p => {
+        let stockVal = 0;
+        if (p.stock !== undefined) {
+          stockVal = Number(p.stock);
+        } else if (p.quantity !== undefined) {
+          stockVal = Number(p.quantity);
+        } else if (p.inStock === true) {
+          stockVal = 15; // default normal stock
+        }
+        
+        return {
+          ...p,
+          stock: stockVal,
+          inStock: stockVal > 0
+        };
+      });
       this.applyFilterAndSearch();
       
       // Update low stock alerts in settings service dynamically (stock <= 10)
-      const lowStock = list.filter(p => p.stock !== undefined && Number(p.stock) <= 10);
+      const lowStock = this.products.filter(p => p.stock !== undefined && Number(p.stock) <= 10);
       this.settingsService.updateLowStockAlerts(lowStock);
       
       this.cdr.detectChanges();
@@ -99,7 +114,17 @@ export class ProductsComponent implements OnInit {
     this.productCategory = product.category || 'Anti-Biotics';
     this.productPrice = product.price || 0;
     this.productOriginalPrice = product.originalPrice || 0;
-    this.productStock = product.stock !== undefined ? Number(product.stock) : 0;
+    
+    let stockVal = 0;
+    if (product.stock !== undefined) {
+      stockVal = Number(product.stock);
+    } else if (product.quantity !== undefined) {
+      stockVal = Number(product.quantity);
+    } else if (product.inStock === true) {
+      stockVal = 15;
+    }
+    this.productStock = stockVal;
+    
     this.productImage = product.image || 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=150&auto=format&fit=crop';
     this.productRating = product.rating || 5.0;
     this.productReviewsCount = product.reviewsCount || 0;
@@ -124,6 +149,8 @@ export class ProductsComponent implements OnInit {
       price: Number(this.productPrice),
       originalPrice: this.productOriginalPrice ? Number(this.productOriginalPrice) : undefined,
       stock: Number(this.productStock),
+      quantity: Number(this.productStock),
+      inStock: Number(this.productStock) > 0,
       image: this.productImage,
       rating: Number(this.productRating),
       reviewsCount: Number(this.productReviewsCount)
