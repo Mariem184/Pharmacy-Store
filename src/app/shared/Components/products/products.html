@@ -61,8 +61,8 @@
           <td>
             <div class="price-cell">
               <span class="current-price">${{ product.price | number:'1.2-2' }}</span>
-              <span class="slashed-price" *ngIf="product.originalPrice && product.originalPrice > product.price">
-                ${{ product.originalPrice | number:'1.2-2' }}
+              <span class="slashed-price" *ngIf="product.oldPrice && product.oldPrice > product.price">
+                ${{ product.oldPrice | number:'1.2-2' }}
               </span>
             </div>
           </td>
@@ -149,6 +149,19 @@
           <div class="form-group">
             <label>Rating (1-5)</label>
             <input type="number" [(ngModel)]="productRating" min="1" max="5" step="0.1">
+          </div>
+          <div class="form-group">
+            <label>Badge Text (e.g. BEST SELLER)</label>
+            <input type="text" [(ngModel)]="productBadge" placeholder="e.g. BEST SELLER">
+          </div>
+          <div class="form-group">
+            <label>Badge Type (New / Best Seller)</label>
+            <select [(ngModel)]="productBadgeType">
+              <option value="">None</option>
+              <option value="bestseller">Best Seller</option>
+              <option value="new">New</option>
+              <option value="pharmacy-pick">Pharmacy Pick</option>
+            </select>
           </div>
           <div class="form-group full-width">
             <label>Product Image URL</label>

@@ -34,6 +34,8 @@ export class ProductsComponent implements OnInit {
   productImage: string = '';
   productRating: number = 5.0;
   productReviewsCount: number = 0;
+  productBadge: string = '';
+  productBadgeType: string = '';
 
   constructor(
     private productService: ProductService,
@@ -103,6 +105,8 @@ export class ProductsComponent implements OnInit {
     this.productImage = 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=150&auto=format&fit=crop';
     this.productRating = 5.0;
     this.productReviewsCount = 0;
+    this.productBadge = '';
+    this.productBadgeType = '';
     this.showModal = true;
   }
 
@@ -113,7 +117,7 @@ export class ProductsComponent implements OnInit {
     this.productBrand = product.brand || '';
     this.productCategory = product.category || 'Anti-Biotics';
     this.productPrice = product.price || 0;
-    this.productOriginalPrice = product.originalPrice || 0;
+    this.productOriginalPrice = product.oldPrice || product.originalPrice || 0;
     
     let stockVal = 0;
     if (product.stock !== undefined) {
@@ -128,6 +132,8 @@ export class ProductsComponent implements OnInit {
     this.productImage = product.image || 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=150&auto=format&fit=crop';
     this.productRating = product.rating || 5.0;
     this.productReviewsCount = product.reviewsCount || 0;
+    this.productBadge = product.badge || '';
+    this.productBadgeType = product.badgeType || '';
     this.showModal = true;
   }
 
@@ -147,10 +153,12 @@ export class ProductsComponent implements OnInit {
       brand: this.productBrand,
       category: this.productCategory,
       price: Number(this.productPrice),
-      originalPrice: this.productOriginalPrice ? Number(this.productOriginalPrice) : undefined,
+      oldPrice: this.productOriginalPrice ? Number(this.productOriginalPrice) : undefined,
       stock: Number(this.productStock),
       quantity: Number(this.productStock),
       inStock: Number(this.productStock) > 0,
+      badge: this.productBadge || undefined,
+      badgeType: this.productBadgeType || undefined,
       image: this.productImage,
       rating: Number(this.productRating),
       reviewsCount: Number(this.productReviewsCount)
