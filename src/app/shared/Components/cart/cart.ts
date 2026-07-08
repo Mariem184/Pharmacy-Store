@@ -138,6 +138,7 @@ export class Cart implements OnInit {
         orderId: this.generatedOrderId,
         customerName: this.shippingName,
         customerEmail: (this.authService.userData.value as any)?.email || 'guest@email.com',
+        customerPhone: this.shippingPhone || '',
         date: new Date().toISOString().split('T')[0],
         itemsCount: this.cartService.cartCount(),
         items: this.cartService.cartItems().map(item => ({

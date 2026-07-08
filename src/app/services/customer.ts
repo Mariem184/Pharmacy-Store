@@ -62,8 +62,14 @@ export class CustomerService {
                 _id: 'ord-' + email.toLowerCase().replace(/[^a-z0-9]/g, ''),
                 name: name,
                 email: email,
+                phone: order.customerPhone || '',
                 createdAt: order.date || new Date().toISOString()
               });
+            } else if (existsInLocal) {
+              const idx = localUsers.findIndex(u => u.email && u.email.toLowerCase() === email.toLowerCase());
+              if (idx !== -1 && !localUsers[idx].phone && order.customerPhone) {
+                localUsers[idx].phone = order.customerPhone;
+              }
             }
           }
         });
@@ -72,7 +78,17 @@ export class CustomerService {
       }
     }
 
-    const combined = [...apiUsers];
+    const combined = [...apiUsers].map(cu => {
+      const localMatch = localUsers.find(lu => lu.email && lu.email.toLowerCase() === cu.email.toLowerCase());
+      if (localMatch) {
+        return {
+          ...cu,
+          phone: localMatch.phone || cu.phone || ''
+        };
+      }
+      return cu;
+    });
+
     localUsers.forEach(lu => {
       const exists = combined.some(cu => cu.email && cu.email.toLowerCase() === lu.email.toLowerCase());
       if (!exists) {

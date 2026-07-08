@@ -16,6 +16,7 @@ export interface Order {
   orderId: string;
   customerName: string;
   customerEmail: string;
+  customerPhone?: string;
   date: string;
   itemsCount: number;
   items: OrderItem[];
