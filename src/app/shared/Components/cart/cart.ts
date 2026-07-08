@@ -18,7 +18,7 @@ export class Cart implements OnInit {
   shippingName = '';
   shippingPhone = '';
   shippingAddress = '';
-  shippingCity = 'Cairo';
+  shippingCity = 'Fifth Settlement';
 
   // Payment Selection
   selectedPaymentMethod = 'cod'; // 'cod', 'card', 'instapay'
