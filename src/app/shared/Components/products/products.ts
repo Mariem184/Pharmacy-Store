@@ -62,11 +62,6 @@ export class ProductsComponent implements OnInit {
         };
       });
       this.applyFilterAndSearch();
-      
-      // Update low stock alerts in settings service dynamically (stock <= 10)
-      const lowStock = this.products.filter(p => p.stock !== undefined && Number(p.stock) <= 10);
-      this.settingsService.updateLowStockAlerts(lowStock);
-      
       this.cdr.detectChanges();
     });
   }

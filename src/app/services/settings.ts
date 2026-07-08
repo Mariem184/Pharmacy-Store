@@ -35,6 +35,12 @@ export class SettingsService {
 
   constructor(private http: HttpClient, private productService: ProductService) {
     this.loadSettings();
+    
+    // Automatically compute and broadcast low stock alerts globally on startup
+    this.productService.products$.subscribe(products => {
+      const lowStock = products.filter(p => p.stock !== undefined && Number(p.stock) <= 10);
+      this.updateLowStockAlerts(lowStock);
+    });
   }
 
   private loadSettings() {
