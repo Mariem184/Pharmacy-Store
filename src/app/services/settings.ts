@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, of } from 'rxjs'; 
+import { ProductService } from '../core/Services/product.services';
 
 export interface StoreSettings {
   storeName: string;
@@ -32,7 +33,7 @@ export class SettingsService {
   private lowStockSubject = new BehaviorSubject<any[]>([]);
   lowStockProducts$ = this.lowStockSubject.asObservable();
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private productService: ProductService) {
     this.loadSettings();
   }
 
@@ -90,7 +91,7 @@ export class SettingsService {
   }
 
   getProducts(): Observable<any[]> {
-    return this.http.get<any[]> ('https://raw.githubusercontent.com/Mariem184/pharmacy-api/refs/heads/main/products.json');
+    return this.productService.getProducts();
   }
 
   updateLowStockAlerts(products: any[]) {

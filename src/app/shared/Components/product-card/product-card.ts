@@ -59,27 +59,24 @@ export class ProductCard implements OnInit, OnDestroy {
   }
 
   fetchProductsFromAPI() {
-    const cacheBuster = `https://raw.githubusercontent.com/Mariem184/pharmacy-api/refs/heads/main/products.json?t=${new Date().getTime()}`;
-
-    this.http.get<any>(cacheBuster)
-      .subscribe({
-        next: (response) => {
-          const prods = response.products || [];
-          this.products.set(prods);      
-          this.totalProducts = prods.length; 
-          
-          if (this.productService.searchQuery) {
-            this.filterBySearch(this.productService.searchQuery);
-          } else if (!this.currentCategory || this.currentCategory.toLowerCase().includes('all')) {
-            this.filteredProducts.set(prods); 
-          } else {
-            this.filterByCategory(this.currentCategory);
-          }
-        },
-        error: (err) => {
-          console.error('حدث خطأ أثناء جلب البيانات الطبية:', err);
+    this.productService.getProducts().subscribe({
+      next: (prods) => {
+        this.products.set(prods);      
+        this.totalProducts = prods.length; 
+        
+        if (this.productService.searchQuery) {
+          this.filterBySearch(this.productService.searchQuery);
+        } else if (!this.currentCategory || this.currentCategory.toLowerCase().includes('all')) {
+          this.filteredProducts.set(prods); 
+        } else {
+          this.filterByCategory(this.currentCategory);
         }
-      });
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('حدث خطأ أثناء جلب البيانات الطبية:', err);
+      }
+    });
   }
 
   filterBySearch(query: string) {
