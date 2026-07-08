@@ -125,6 +125,7 @@
             <h4>Customer Information</h4>
             <p><strong>Name:</strong> {{ selectedOrder.customerName }}</p>
             <p><strong>Email:</strong> {{ selectedOrder.customerEmail }}</p>
+            <p><strong>Phone:</strong> {{ selectedOrder.customerPhone || 'No phone number' }}</p>
             <p><strong>Address:</strong> {{ selectedOrder.shippingAddress }}</p>
           </div>
           <div class="overview-card">
