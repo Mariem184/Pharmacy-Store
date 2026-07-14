@@ -26,6 +26,8 @@ export class Header implements OnInit {
   showNotificationBox: boolean = false; 
   adminInitials: string = 'AM';
   dismissedNotificationIds = signal<string[]>([]);
+  storeNameFirst: string = 'Medi';
+  storeNameSecond: string = 'Store';
 
   constructor(
     public settingsService: SettingsService,
@@ -51,6 +53,27 @@ export class Header implements OnInit {
         this.adminInitials = this.getInitials(user.name);
       } else {
         this.adminInitials = 'AM';
+      }
+      this.cdr.detectChanges();
+    });
+
+    this.settingsService.settings$.subscribe(settings => {
+      const name = settings.storeName || 'MediStore';
+      const spaceIdx = name.indexOf(' ');
+      if (spaceIdx > 0) {
+        this.storeNameFirst = name.substring(0, spaceIdx);
+        this.storeNameSecond = name.substring(spaceIdx).trim();
+      } else {
+        const uppercaseMatches = [...name.matchAll(/[A-Z]/g)];
+        if (uppercaseMatches.length >= 2) {
+          const secondCapIdx = uppercaseMatches[1].index!;
+          this.storeNameFirst = name.substring(0, secondCapIdx);
+          this.storeNameSecond = name.substring(secondCapIdx);
+        } else {
+          const mid = Math.ceil(name.length / 2);
+          this.storeNameFirst = name.substring(0, mid);
+          this.storeNameSecond = name.substring(mid);
+        }
       }
       this.cdr.detectChanges();
     });

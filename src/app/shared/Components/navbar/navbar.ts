@@ -20,6 +20,8 @@ export class Navbar implements OnInit {
   private isInitialized = false;
 
   searchQuery: string = '';
+  storeNameFirst: string = 'Medi';
+  storeNameSecond: string = 'Store';
 
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;
@@ -49,6 +51,30 @@ export class Navbar implements OnInit {
         }
       }
     });
+
+    this.settingsService.settings$.subscribe(settings => {
+      const name = settings.storeName || 'MediStore';
+      const spaceIdx = name.indexOf(' ');
+      if (spaceIdx > 0) {
+        this.storeNameFirst = name.substring(0, spaceIdx);
+        this.storeNameSecond = name.substring(spaceIdx).trim();
+      } else {
+        const uppercaseMatches = [...name.matchAll(/[A-Z]/g)];
+        if (uppercaseMatches.length >= 2) {
+          const secondCapIdx = uppercaseMatches[1].index!;
+          this.storeNameFirst = name.substring(0, secondCapIdx);
+          this.storeNameSecond = name.substring(secondCapIdx);
+        } else {
+          const mid = Math.ceil(name.length / 2);
+          this.storeNameFirst = name.substring(0, mid);
+          this.storeNameSecond = name.substring(mid);
+        }
+      }
+      if (this.isInitialized) {
+        this.cdr.detectChanges();
+      }
+    });
+
     this.isInitialized = true;
     this.cdr.detectChanges();
   }
